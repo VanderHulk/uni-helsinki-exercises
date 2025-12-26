@@ -11,13 +11,22 @@ const Statistics = ({valGood, valNeutral, valBad}) => {
   const getAverage = (getTotal) ? (valGood - valBad) / getTotal : 0
   const getPositivePercentage = (getTotal) ? (valGood / getTotal) * 100 : 0
 
-  return (
-    <>
-      <Display text='Total' result={getTotal} />
-      <Display text='Average' result={getAverage} />
-      <Display text='Positive' result={getPositivePercentage} />
-    </>
-  )
+  if (getTotal) {
+    return (
+      <>
+        <Display text='Good' result={valGood} />
+        <Display text='Neutral' result={valNeutral} />
+        <Display text='Bad' result={valBad} />
+        <Display text='Total' result={getTotal} />
+        <Display text='Average' result={getAverage} />
+        <Display text='Positive' result={getPositivePercentage} />
+      </>
+    )
+  } else {
+    return (
+      <p>No feedback given</p>
+    )
+  }
 }
 
 const App = () => {
@@ -37,11 +46,8 @@ const App = () => {
       <Button onClick={() => collectFeedback(good, setGood)} text='Good' />
       <Button onClick={() => collectFeedback(neutral, setNeutral)} text='Neutral' />
       <Button onClick={() => collectFeedback(bad, setBad)} text='Bad' />
-      <Header title='Statistics' />
-      <Display text='Good' result={good} />
-      <Display text='Neutral' result={neutral} />
-      <Display text='Bad' result={bad} />
-      <Statistics valGood={good} valNeutral={neutral} valBad={bad}/>
+      <Header title='Statistics' />      
+      <Statistics valGood={good} valNeutral={neutral} valBad={bad} />
     </div>
   )
 }
