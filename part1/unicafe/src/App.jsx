@@ -4,27 +4,27 @@ const Header = ({ title }) => <h2>{title}</h2>
 
 const Button = ({ onClick, text}) => <button onClick = {onClick}>{text}</button>
 
-const Display = ({ text, result}) => <p>{text} {result}</p>
+const StatisticsLine = ({ text, value}) => <p>{text} {value}</p>
 
 const Statistics = ({valGood, valNeutral, valBad}) => {
   const getTotal = valGood + valNeutral + valBad
-  const getAverage = (getTotal) ? (valGood - valBad) / getTotal : 0
-  const getPositivePercentage = (getTotal) ? (valGood / getTotal) * 100 : 0
+  const getAverage = (valGood - valBad) / getTotal
+  const getPositivePercentage = (valGood / getTotal) * 100
 
   if (getTotal) {
     return (
       <>
-        <Display text='Good' result={valGood} />
-        <Display text='Neutral' result={valNeutral} />
-        <Display text='Bad' result={valBad} />
-        <Display text='Total' result={getTotal} />
-        <Display text='Average' result={getAverage} />
-        <Display text='Positive' result={getPositivePercentage} />
+        <StatisticsLine text='Good' value={valGood} />
+        <StatisticsLine text='Neutral' value={valNeutral} />
+        <StatisticsLine text='Bad' value={valBad} />
+        <StatisticsLine text='Total' value={getTotal} />
+        <StatisticsLine text='Average' value={getAverage} />
+        <StatisticsLine text='Positive' value={getPositivePercentage} />
       </>
     )
   } else {
     return (
-      <p>No feedback given</p>
+      <p>No feedback</p>
     )
   }
 }
