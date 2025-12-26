@@ -4,23 +4,32 @@ const Header = ({ title }) => <h2>{title}</h2>
 
 const Button = ({ onClick, text}) => <button onClick = {onClick}>{text}</button>
 
-const StatisticsLine = ({ text, value}) => <p>{text} {value}</p>
+const StatisticsLine = ({ text, value}) => {
+  return (
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
+  )
+}
 
 const Statistics = ({valGood, valNeutral, valBad}) => {
   const getTotal = valGood + valNeutral + valBad
-  const getAverage = (valGood - valBad) / getTotal
-  const getPositivePercentage = (valGood / getTotal) * 100
+  const getAverage = ((valGood - valBad) / getTotal).toFixed(2)
+  const getPositivePercentage = ((valGood / getTotal) * 100).toFixed(1) + '%'
 
   if (getTotal) {
     return (
-      <>
-        <StatisticsLine text='Good' value={valGood} />
-        <StatisticsLine text='Neutral' value={valNeutral} />
-        <StatisticsLine text='Bad' value={valBad} />
-        <StatisticsLine text='Total' value={getTotal} />
-        <StatisticsLine text='Average' value={getAverage} />
-        <StatisticsLine text='Positive' value={getPositivePercentage} />
-      </>
+      <table>
+        <tbody>
+          <StatisticsLine text='Good' value={valGood} />
+          <StatisticsLine text='Neutral' value={valNeutral} />
+          <StatisticsLine text='Bad' value={valBad} />
+          <StatisticsLine text='Total' value={getTotal} />
+          <StatisticsLine text='Average' value={getAverage} />
+          <StatisticsLine text='Positive' value={getPositivePercentage} />
+        </tbody>
+      </table>
     )
   } else {
     return (
