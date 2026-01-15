@@ -29,17 +29,28 @@ const generateRandomNumber = () => {
   return randomNumber
 }
 
+// finds and displays anecdote with most votes
+/* 
+  two returns why?
+  inner return: returns the result for acc
+  outer return: returns the acc for mostVotes
+*/
+const mostVotes = (voteCount) => { 
+  return Object.entries(voteCount).reduce((acc, [key, val]) => {
+    return val > acc.val ? { key, val } : acc
+  }, { key: null, val: -Infinity })  
+}
 
 // COMPONENTS:
 
 const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
 
-const DisplayAnecdoteVotes = ({anecdote, voteCount}) => {
+const DisplayAnecdoteVotes = ({text, anecdote, totalVotes}) => {
   return (
     <>
-      <div>{anecdote}</div>
-      <br />
-      <div>{`has ${voteCount} votes`}</div>      
+      <h2>{text}</h2>
+      <div>{anecdote}</div>      
+      <div>{`has ${totalVotes} votes`}</div>      
     </>
   )
 }
@@ -58,14 +69,17 @@ const App = () => {
   }
 
   // console.log(voteCount)
-   
+  // console.log(mostVotes(voteCount))
+  const key = mostVotes(voteCount).key
+
   return (
     <div>      
-      <DisplayAnecdoteVotes anecdote={anecdotes[selected]} voteCount={voteCount[selected]} />      
+      <DisplayAnecdoteVotes text="Anecdote of the day" anecdote={anecdotes[selected]} totalVotes={voteCount[selected]} />
       <br />
       <Button onClick={() => voteAnAnecdote(selected)} text='Vote' />
       {/* pick a new random anecdote */}
       <Button onClick={() => setSelected(generateRandomNumber())} text='Next Anecdote' />
+      <DisplayAnecdoteVotes text="Anecdote with most votes" anecdote={anecdotes[key]} totalVotes={voteCount[key]} />
     </div>
   )
 }
