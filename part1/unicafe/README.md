@@ -2,7 +2,7 @@
 
 FullStack Open - Part 1
 
-A more complex state, debugging React apps: Exercises 1.6-1.14
+A more complex state, debugging React apps: Exercises 1.6-1.11
 
 App (root component):
 -  3 states:
