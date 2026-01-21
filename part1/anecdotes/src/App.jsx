@@ -29,57 +29,96 @@ const generateRandomNumber = () => {
   return randomNumber
 }
 
-// finds and displays anecdote with most votes
+// finds and displays anecdote with most votes but does not show highest tied votes
 /* 
   two returns why?
   inner return: returns the result for acc
   outer return: returns the acc for mostVotes
-*/
+
 const mostVotes = (voteCount) => { 
   return Object.entries(voteCount).reduce((acc, [key, val]) => {
     return val > acc.val ? { key, val } : acc
-  }, { key: null, val: -Infinity })  
+  }, { key: null, val: -Infinity })
+}
+
+*/
+
+const maxVotes = (voteCount) => {  
+  // finds the highest vote count among all anecdotes  
+  const maxVote = Math.max(...Object.values(voteCount)) 
+  // return an array of indices (keys) that are equal to the maxVote
+  if(maxVote) {
+    return Object.keys(voteCount).filter(key => voteCount[key] === maxVote)  
+  } else {
+    return [];
+  }
+}
+
+const displayMostVotes = (voteCountObj) => {
+  const finalVotes = maxVotes(voteCountObj)
+  
+  if(finalVotes) {
+    console.log('finalVotes', finalVotes)
+    return finalVotes.map(index => (
+      <div key={index}>
+        <DisplayAnecdoteVotes anecdote={anecdotes[index]} totalVotes={voteCountObj[index]} />
+        <br />
+      </div>
+    ))
+  }
 }
 
 // COMPONENTS:
 
 const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
 
-const DisplayAnecdoteVotes = ({text, anecdote, totalVotes}) => {
+const DisplayAnecdoteVotes = ({anecdote, totalVotes}) => {  
   return (
-    <>
-      <h2>{text}</h2>
+    <>      
       <div>{anecdote}</div>      
-      <div>{`has ${totalVotes} votes`}</div>      
+      <div>{`has ${totalVotes} votes`}</div>   
     </>
   )
 }
+
+const DisplayTitle = ({title}) => <h2>{title}</h2>
+
+// APP:
 
 const App = () => {  
 
   const [selected, setSelected] = useState(0)
   const [voteCount, setVoteCount] = useState(generateVotesTally())
+  // add this to display title once during the first vote
+  const [hasVoted, setHasVoted] = useState(false)
   
-  const voteAnAnecdote = () => {    
-    const votesCopy = { ...voteCount } // make a shallow copy to update state without mutating the original object
+  const voteAnAnecdote = () => {
+    // make a shallow copy to update state without mutating the original object
+    const votesCopy = { ...voteCount }
 
     votesCopy[selected] += 1;
     // console.log(anecdotes[selected], votesCopy[selected])
     setVoteCount(votesCopy)
+    setHasVoted(true)
   }
 
   // console.log(voteCount)
-  // console.log(mostVotes(voteCount))
-  const key = mostVotes(voteCount).key
-
+  
   return (
-    <div>      
-      <DisplayAnecdoteVotes text="Anecdote of the day" anecdote={anecdotes[selected]} totalVotes={voteCount[selected]} />
+    <div>
+      <DisplayTitle title="Anecdote of the day" />
+      <DisplayAnecdoteVotes anecdote={anecdotes[selected]} totalVotes={voteCount[selected]} />
       <br />
       <Button onClick={() => voteAnAnecdote(selected)} text='Vote' />
       {/* pick a new random anecdote */}
       <Button onClick={() => setSelected(generateRandomNumber())} text='Next Anecdote' />
-      <DisplayAnecdoteVotes text="Anecdote with most votes" anecdote={anecdotes[key]} totalVotes={voteCount[key]} />
+      
+      {hasVoted && (
+        <>
+          <DisplayTitle title="Anecdote(s) with the most votes" />
+          <div>{displayMostVotes(voteCount)}</div>
+        </>
+      )}
     </div>
   )
 }
