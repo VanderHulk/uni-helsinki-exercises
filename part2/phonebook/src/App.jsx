@@ -3,7 +3,7 @@ import { useState } from 'react'
 const App = () => {
   const [persons, setPersons] = useState([
     {
-       id: '1',
+      id: '1',
       name: 'Arto Hellas'      
     }
   ])
@@ -11,13 +11,23 @@ const App = () => {
 
   const addContact = (event) => {
     event.preventDefault()
+
+    const person = persons.find(person => person.name === newName)
+  
     const contact = {
       id: String(persons.length + 1),
       name: newName  
+    } 
+    
+    if (!person) {          
+      setPersons(persons.concat(contact))
+      setNewName('')
+    } else {
+      alert(`${newName} is already added to phonebook`)
     }    
-    setPersons(persons.concat(contact))
-    setNewName('')
   }
+
+  
 
   return (
     <div>
@@ -41,6 +51,7 @@ const App = () => {
             </li>
         )}
       </ul>
+      <div>Debug: {newName}</div>
     </div>
   )
 }
