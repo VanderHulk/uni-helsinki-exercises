@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { InputField } from './components/InputField'
+import { SearchField, SearchFilter } from './components/Search'
+import { PersonForm } from './components/PersonForm'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -16,16 +19,20 @@ const App = () => {
   const addContact = (event) => {
     event.preventDefault()
 
-    const person = persons.find(person => person.name === newName)
+    if (!newName || !newNumber) {
+      return
+    }    
   
-    const contact = {
+    const newContact = {
       id: String(persons.length + 1),
       name: newName,
       number: newNumber
-    } 
+    }
+    
+    const person = persons.find(person => person.name === newName)
     
     if (!person) {          
-      setPersons(persons.concat(contact))
+      setPersons(persons.concat(newContact))
       setNewName('')
       setNewNumber('')
     } else {
@@ -37,53 +44,24 @@ const App = () => {
     person.name.toLowerCase().includes(keyword.toLowerCase().trim())
   )
 
-  const DisplayFilteredContacts = ({ contacts }) => {
-    return (
-      contacts.map(contact => 
-        <li key={ contact.id }>
-          { contact.name } { contact.number }
-        </li>
-      )
-    )
-  }
+  const formValues = { newName, newNumber, keyword }
+  const formSetters = { setNewName, setNewNumber, setKeyword }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
-        <div>
-          <label>Search:<input 
-            value = {keyword}
-            onChange = {(e) => setKeyword(e.target.value)}
-            />
-          </label>
-        </div>
-      </form>
+
+      <SearchField values={formValues} setters={formSetters} />
+
       <h3>Add a new contact</h3>
-      <form onSubmit={addContact}>
-        <div>
-          <label>name:<input
-              value = { newName }
-              onChange = {(e) => setNewName(e.target.value)}
-            />
-          </label>              
-        </div>
-        <div>
-          <label>number:<input
-              value = { newNumber }
-              onChange = {(e) => setNewNumber(e.target.value)}
-            />      
-          </label>            
-        </div>
-        <div>
-          <button type='submit'>add</button>
-        </div>
-      </form>
+      <PersonForm values={formValues} setters={formSetters} onSubmit={addContact} />
+
       <h3>Numbers</h3>
       <ul>        
-        <DisplayFilteredContacts contacts={keyword ? searchContacts : persons} />
+        <SearchFilter contacts={keyword ? searchContacts : persons} />
       </ul>
-      <div>Debug: { newName } {newNumber}</div>
+
+      {/* <div>Debug: {newName} {newNumber}</div> */}
     </div>
   )
 }
