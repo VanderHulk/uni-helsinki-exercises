@@ -20,7 +20,9 @@ const App = () => {
       })
   }, [])
 
-  const addContact = (event) => {
+  // use async/await to wait for the server to create the new contact (which does not exist yet in the backend)
+  // after the response, update state with the saved contact (including generated id).
+  const addContact = async (event) => {
     event.preventDefault()
 
     if (!newName || !newNumber) {
@@ -28,23 +30,27 @@ const App = () => {
     }    
   
     const newContact = {
-      id: String(persons.length + 1),
+      // no id here — the server generates it when saving
       name: newName,
       number: newNumber
     }
     
     const person = persons.find(person => person.name === newName)
+    // checks if a contact with the same name already exists
     
     if (!person) {          
-      setPersons(persons.concat(newContact))
+      const response = await axios.post('http://localhost:3001/persons', newContact)
+      console.log('axios post response', response)
+      setPersons(persons.concat(response.data))
+      // update state with the new contact, triggers re-render
       setNewName('')
       setNewNumber('')
     } else {
       alert(`${newName} is already added to phonebook`)
-    }    
+    }
   }
 
-  const searchContacts = persons.filter(person => 
+  const searchContacts = persons.filter(person =>
     person.name.toLowerCase().includes(keyword.toLowerCase().trim())
   )
 
