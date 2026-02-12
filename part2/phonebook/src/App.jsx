@@ -20,8 +20,6 @@ const App = () => {
       })
   }, [])
 
-  // use async/await to wait for the server to create the new contact (which does not exist yet in the backend)
-  // after the response, update state with the saved contact (including generated id).
   const addContact = (event) => {
     event.preventDefault()
 
