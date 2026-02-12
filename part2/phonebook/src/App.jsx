@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import { InputField } from './components/InputField'
 import { SearchField, SearchFilter } from './components/Search'
 import { PersonForm } from './components/PersonForm'
+import contactsService from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,18 +11,18 @@ const App = () => {
   const [keyword, setKeyword] = useState('')
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
+    // console.log('effect')
+    contactsService
+      .getAll()
+      .then(initialContacts => {
         console.log('promise fulfilled')
-        setPersons(response.data)
+        setPersons(initialContacts)
       })
   }, [])
 
   // use async/await to wait for the server to create the new contact (which does not exist yet in the backend)
   // after the response, update state with the saved contact (including generated id).
-  const addContact = async (event) => {
+  const addContact = (event) => {
     event.preventDefault()
 
     if (!newName || !newNumber) {
@@ -39,12 +39,14 @@ const App = () => {
     // checks if a contact with the same name already exists
     
     if (!person) {          
-      const response = await axios.post('http://localhost:3001/persons', newContact)
-      console.log('axios post response', response)
-      setPersons(persons.concat(response.data))
-      // update state with the new contact, triggers re-render
-      setNewName('')
-      setNewNumber('')
+      contactsService
+        .create(newContact)
+        .then(returnedContact => {
+          console.log('axios post response', returnedContact)
+          setPersons(persons.concat(returnedContact))
+          setNewName('')
+          setNewNumber('')
+        })
     } else {
       alert(`${newName} is already added to phonebook`)
     }
