@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { InputField } from './components/InputField'
 import { SearchField, SearchFilter } from './components/Search'
 import { PersonForm } from './components/PersonForm'
-import contactsService from './services/phonebook'
+import { getAll, create, deleteItem } from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -12,8 +12,7 @@ const App = () => {
 
   useEffect(() => {
     // console.log('effect')
-    contactsService
-      .getAll()
+    getAll()
       .then(initialContacts => {
         console.log('promise fulfilled')
         setPersons(initialContacts)
@@ -37,11 +36,10 @@ const App = () => {
     // checks if a contact with the same name already exists
     
     if (!person) {          
-      contactsService
-        .create(newContact)
-        .then(returnedContact => {
-          console.log('axios post response', returnedContact)
-          setPersons(persons.concat(returnedContact))
+      create(newContact)
+        .then(returnedData => {
+          console.log('addContact: axios post response', returnedData)
+          setPersons(persons.concat(returnedData))
           setNewName('')
           setNewNumber('')
         })
@@ -50,9 +48,31 @@ const App = () => {
     }
   }
 
-  const searchContacts = persons.filter(person =>
-    person.name.toLowerCase().includes(keyword.toLowerCase().trim())
-  )
+  // handleDelete is pass as reference to SearchFilter > Person (where it is called)
+  const handleDelete = id => {
+    const person = persons.find(p => p.id === id)
+    if (confirm(`Delete ${person.name}?`)) {
+      deleteItem(id)
+        .then(returnedStatus => {
+          if(returnedStatus === 200 || returnedStatus === 204){
+            alert(`${person.name} has been successfully deleted!`)
+            setPersons(persons.filter(person => person.id !== id))
+          }
+        })
+        .catch(error => {
+          alert(`Failed to delete ${person.name}. Please try again.`)
+        })
+    }    
+  }
+
+  // use for filtering contacts when user searches a specific contact
+  // returns persons state when user is not searching
+  const filteredContacts = keyword 
+    ? persons.filter(person => {
+        console.log("searchContacts", keyword.toLowerCase().trim())
+        return person.name.toLowerCase().includes(keyword.toLowerCase().trim())
+      })
+    : persons  
 
   const formValues = { newName, newNumber, keyword }
   const formSetters = { setNewName, setNewNumber, setKeyword }
@@ -68,7 +88,7 @@ const App = () => {
 
       <h3>Numbers</h3>
       <ul>        
-        <SearchFilter contacts={keyword ? searchContacts : persons} />
+        <SearchFilter contacts={filteredContacts} onDelete={handleDelete}/>
       </ul>
 
       {/* <div>Debug: {newName} {newNumber}</div> */}

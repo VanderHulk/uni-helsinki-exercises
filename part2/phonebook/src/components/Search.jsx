@@ -8,14 +8,14 @@ export const SearchField = ({ values, setters }) => {
     )
 }
 
-export const SearchFilter = ({ contacts }) => {
-    return contacts.map(contact => <Person key={contact.id} details={contact}/>)        
+export const SearchFilter = ({ contacts, onDelete }) => {
+    return contacts.map(contact => <Person key={contact.id} details={contact} onClick={onDelete} />)        
 }
 
-const Person = ({ details }) => {
-    return (
+const Person = ({ details, onClick }) => {
+    return (        
         <li>
-            {details.name} {details.number}
+            {details.name} {details.number} <button onClick={() => onClick(details.id)}>delete</button> 
         </li>
     )
 }
