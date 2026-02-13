@@ -11,6 +11,12 @@ export const create = newContact => {
     return request.then(response => response.data)
 }
 
+export const update = (id, newContact) => {    
+    const request = axios.put(`${baseUrl}/${id}`, newContact)
+    console.log(request)
+    return request.then(response => response.data)
+}
+
 export const deleteItem = id => {
     console.log('you have reached delete request', id)
     const request = axios.delete(`${baseUrl}/${id}`)

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { InputField } from './components/InputField'
 import { SearchField, SearchFilter } from './components/Search'
 import { PersonForm } from './components/PersonForm'
-import { getAll, create, deleteItem } from './services/phonebook'
+import { getAll, create, update, deleteItem } from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -17,34 +17,59 @@ const App = () => {
         console.log('promise fulfilled')
         setPersons(initialContacts)
       })
-  }, [])
+  }, [])  
 
   const addContact = (event) => {
     event.preventDefault()
 
-    if (!newName || !newNumber) {
-      return
-    }    
-  
-    const newContact = {
-      // no id here — the server generates it when saving
-      name: newName,
-      number: newNumber
-    }
+    const trimmedName = newName.trim()
+    const trimmedNumber = newNumber.trim()
+
+    if (!trimmedName || !trimmedNumber) return
     
-    const person = persons.find(person => person.name === newName)
-    // checks if a contact with the same name already exists
-    
-    if (!person) {          
+    const person = persons.find(person => person.name.toLowerCase() === trimmedName.toLowerCase())
+    // checks if a contact with the same name already exists    
+      
+    if (!person) {
+
+      const newContact = {
+        // no id here — the server generates it when saving
+        name: trimmedName,
+        number: trimmedNumber
+      }
+
       create(newContact)
         .then(returnedData => {
           console.log('addContact: axios post response', returnedData)
-          setPersons(persons.concat(returnedData))
+          setPersons(prev => prev.concat(returnedData))
           setNewName('')
           setNewNumber('')
         })
     } else {
-      alert(`${newName} is already added to phonebook`)
+      updateContact(person, trimmedNumber)
+    }
+  }
+
+  const updateContact = (person, trimmedNumber) => {
+    if(!person) return
+    
+    const personNumber = person.number.replace(/\D/g, "")
+
+    if(personNumber === trimmedNumber.replace(/\D/g, "")) {        
+      alert(`${person.name} ${person.number} is already added to phonebook`)
+      return
+    } else {
+      const changedContact = { ...person, number: trimmedNumber }          
+      if(confirm(`${person.name} is already added to phonebook, replace the ${person.number} with ${trimmedNumber}?`)) {
+        update(person.id, changedContact)
+          .then(returnedData => {                    
+            setPersons(prev => 
+              prev.map(p => p.id === person.id ? returnedData : p)
+            )
+            setNewName('')
+            setNewNumber('')
+          })
+      }
     }
   }
 
