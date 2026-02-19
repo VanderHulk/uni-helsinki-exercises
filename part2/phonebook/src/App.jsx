@@ -2,13 +2,16 @@ import { useState, useEffect } from 'react'
 import { InputField } from './components/InputField'
 import { SearchField, SearchFilter } from './components/Search'
 import { PersonForm } from './components/PersonForm'
+import { Notification } from './components/Notification'
 import { getAll, create, update, deleteItem } from './services/phonebook'
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [keyword, setKeyword] = useState('')
+  const [keyword, setKeyword] = useState('') 
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     // console.log('effect')
@@ -17,7 +20,7 @@ const App = () => {
         console.log('promise fulfilled')
         setPersons(initialContacts)
       })
-  }, [])  
+  }, [])
 
   const addContact = (event) => {
     event.preventDefault()
@@ -44,10 +47,11 @@ const App = () => {
           setPersons(prev => prev.concat(returnedData))
           setNewName('')
           setNewNumber('')
+          messageTimer(`Added ${returnedData.name}`, 'success', 3000)
         })
     } else {
       updateContact(person, trimmedNumber)
-    }
+    }    
   }
 
   const updateContact = (person, trimmedNumber) => {
@@ -68,6 +72,10 @@ const App = () => {
             )
             setNewName('')
             setNewNumber('')
+            messageTimer(`Updated ${person.name}'s number from ${person.number} to ${trimmedNumber}`, 'success', 5000)
+          })
+          .catch(error => {
+            messageTimer(`Information of ${person.name} has already been removed from server.`, 'error', 5000)          
           })
       }
     }
@@ -79,15 +87,45 @@ const App = () => {
     if (confirm(`Delete ${person.name}?`)) {
       deleteItem(id)
         .then(returnedStatus => {
-          if(returnedStatus === 200 || returnedStatus === 204){
-            alert(`${person.name} has been successfully deleted!`)
-            setPersons(persons.filter(person => person.id !== id))
+          if(returnedStatus === 200 || returnedStatus === 204){            
+            setPersons(prev => 
+              prev.filter(p => p.id !== id)
+            )
+            messageTimer(`Deleted ${person.name}`, 'success', 3000)
           }
         })
         .catch(error => {
-          alert(`Failed to delete ${person.name}. Please try again.`)
+          if(error.response && error.response.status === 404) {
+            messageTimer(
+              `Information of ${person.name} has already been removed from server.`, 
+              'error', 
+              5000
+            )
+            
+            setPersons(prev => 
+              prev.filter(p => p.id !== id)
+            )
+          } else {
+            messageTimer(
+              `Failed to delete ${person.name}. Please try again.`,
+              'error',
+              5000
+            )
+          }
         })
     }    
+  }
+
+  const messageTimer = (message, type, duration) => {
+    
+    setNotification({ 
+      message: message, 
+      type: type
+    })
+    console.log(notification)
+    setTimeout(() => {
+      setNotification(null)
+    }, duration)
   }
 
   // use for filtering contacts when user searches a specific contact
@@ -105,6 +143,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification notification={notification}/>
 
       <SearchField values={formValues} setters={formSetters} />
 

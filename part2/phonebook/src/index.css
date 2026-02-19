@@ -1,0 +1,26 @@
+li {
+    padding-bottom: 0.25rem;
+}
+
+input {
+    margin-bottom: 0.25rem;
+}
+
+.notification {
+    border: 4px;
+    border-radius: 5px;
+    border-style: solid;
+    background-color: lightgrey;        
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.success {
+    color: green;
+}
+
+.error {
+    color: red;
+}
