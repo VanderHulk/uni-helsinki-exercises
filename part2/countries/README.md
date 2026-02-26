@@ -1,4 +1,4 @@
-# Exercises Information
+# Exercise Information
 
 FullStack Open - Part 2
 
@@ -6,11 +6,12 @@ Countries: Exercises 2.18-2.20
 
 # App (root component)
 
-- **Four States:**
+- **Five States:**
     - [countries, setCountries], holds and updates(once) countries data from the server
     - [searchWord, setSearchWord], holds and updates user's country search
     - [countryInfo, setCountryInfo], holds and updates a single country's data
     - [weather, setWeather], holds and updates countryInfo's weather data
+    - [error, setError], holds and updates error messages
 - **Three Effects:**
     - fetches countries data from the server once, on mount ([])
     - fetches a country's weather data everytime countryInfo gets updated ([countryInfo])
@@ -26,9 +27,9 @@ Countries: Exercises 2.18-2.20
     - **Three components:**
         - **CountryInfo**, receives the countryInfo state value and renders a single country's data
         - **ListLanguages**, receives the countryInfo languages data and renders it along with CountryInfo component
-        - **TenCountries**, receives the searchResults variable and renders a list of ten countries only, handles the onClick to show a single countryäs data
+        - **TenCountries**, receives the searchResults variable and renders a list of ten countries only, handles the onClick to show a single country's data
 - **Weather.jsx**
-    - **Weather component**, receives the weather state value and it's data
+    - **Weather component**, receives the weather state value and its data
 
 # Services
 Use axios to make HTTP requests from the browser. API calls are asynchronous and handled using axios promises.
