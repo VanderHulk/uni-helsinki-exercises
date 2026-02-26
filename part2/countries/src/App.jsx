@@ -48,41 +48,40 @@ const App = () => {
     ? countries.filter(c => c.name.common.toLowerCase().includes(searchWord.toLowerCase().trimStart())) 
     : []
 
-  useEffect(() => {
-    if(searchResults) {
-      if(searchResults.length === 1) {
-        setCountryInfo(searchResults[0])
-      } else if(searchResults.length > 10) {
-        setCountryInfo(null)
-      }
-    }
+  useEffect(() => {    
+    if(searchResults.length === 1) {
+      setCountryInfo(searchResults[0])
+    } else if(searchResults.length > 10) {
+      setCountryInfo(null)
+    }    
   }, [searchResults])  
 
   //  display the search results if there are more than 1 country
   const ListCountries = ({ countries }) => {
-    if(countries.length === 1) {
-      return null
-    } else if(countries.length > 0 && countries.length < 11) {       
+      if(countries.length === 1) return null      
+      
+      if(countries.length > 10) return <p>{`Found ${countries.length} matches. Please be more specific.`}</p>
+
       return <TenCountries countries={countries} onShow={handleShow} />
-    } else if(countries.length > 10) {        
-      return <p>{`Found ${countries.length} matches. Please be more specific.`}</p>
-    }    
   }  
 
   const handleShow = id => id ? setCountryInfo(countries.find(c => c.cca3 === id)) : null
 
-  // console.log('searchResults:', searchResults)
-  // console.log('countryInfo:', countryInfo)
+  const handleSearch = event => {
+    setSearchWord(event.target.value)
+    setCountryInfo(null)
+  }
+
 
   return (
     <div>
       <label className="findLabel">Find Countries 
-        <input value={searchWord} onChange={(e) => setSearchWord(e.target.value)} />
+        <input value={searchWord} onChange={(e) => handleSearch(e)} />
       </label>
 
       <Error message={error} />
 
-      <ListCountries countries={searchResults} />      
+      <ListCountries countries={searchResults} />
 
       <CountryInfo country={countryInfo} />
 
@@ -91,5 +90,4 @@ const App = () => {
     </div>
   )
 }
-
 export default App

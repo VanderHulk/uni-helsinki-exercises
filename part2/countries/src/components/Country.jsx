@@ -1,8 +1,8 @@
 export const CountryInfo = ({ country }) => {
-    if(country) {
+    if(country) {        
         return (
             <article>
-                <h1>{country.name.common}</h1>
+                <h1>{`${country.name.common}, ${country.region}`}</h1>                
                 <p>{`Capital: ${country.capital}`}</p>
                 <p>{`Area: ${country.area}`}</p>
 
