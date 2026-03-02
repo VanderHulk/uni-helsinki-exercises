@@ -70,6 +70,7 @@ const App = () => {
   const handleSearch = event => {
     setSearchWord(event.target.value)
     setCountryInfo(null)
+    setWeather(null)
   }
 
 
