@@ -13,11 +13,10 @@ const App = () => {
   const [keyword, setKeyword] = useState('') 
   const [notification, setNotification] = useState(null)
 
-  useEffect(() => {
-    // console.log('effect')
+  useEffect(() => {    
     getAll()
       .then(initialContacts => {
-        console.log('promise fulfilled')
+        // console.log('promise fulfilled')
         setPersons(initialContacts)
       })
   }, [])
@@ -43,7 +42,7 @@ const App = () => {
 
       create(newContact)
         .then(returnedData => {
-          console.log('addContact: axios post response', returnedData)
+          // console.log('addContact: axios post response', returnedData)
           setPersons(prev => prev.concat(returnedData))
           setNewName('')
           setNewNumber('')
@@ -57,6 +56,9 @@ const App = () => {
   const updateContact = (person, trimmedNumber) => {
     if(!person) return
     
+    /* \D → matches any non-digit character (anything that is not 0–9)
+        g → global flag (replace all matches, not just the first one)
+        replace(..., "") → replaces those matches with an empty string */
     const personNumber = person.number.replace(/\D/g, "")
 
     if(personNumber === trimmedNumber.replace(/\D/g, "")) {        
@@ -121,8 +123,7 @@ const App = () => {
     setNotification({ 
       message: message, 
       type: type
-    })
-    console.log(notification)
+    })    
     setTimeout(() => {
       setNotification(null)
     }, duration)
@@ -132,7 +133,7 @@ const App = () => {
   // returns persons state when user is not searching
   const filteredContacts = keyword 
     ? persons.filter(person => {
-        console.log("searchContacts", keyword.toLowerCase().trim())
+        // console.log("searchContacts", keyword.toLowerCase().trim())
         return person.name.toLowerCase().includes(keyword.toLowerCase().trim())
       })
     : persons  

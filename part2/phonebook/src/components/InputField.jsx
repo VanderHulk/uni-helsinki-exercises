@@ -1,9 +1,9 @@
-export const InputField = (props) => {
+export const InputField = ({text, stateValue, setStateValue}) => {
     return (        
         <div>
-            <label>{props.text}:<input
-                value = {props.stateValue}
-                onChange = {(e) => props.setStateValue(e.target.value)}
+            <label>{text}:<input
+                value = {stateValue}
+                onChange = {(e) => setStateValue(e.target.value)}
             />
             </label>              
         </div>            

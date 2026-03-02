@@ -1,10 +1,8 @@
 import { InputField } from './InputField'
 
 export const SearchField = ({ values, setters }) => {
-    return (
-        <form>
-            <InputField text='Search' stateValue={values.keyword} setStateValue={setters.setKeyword} />
-        </form>
+    return (       
+        <InputField text='Search' stateValue={values.keyword} setStateValue={setters.setKeyword} />
     )
 }
 

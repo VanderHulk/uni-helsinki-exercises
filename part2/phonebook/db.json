@@ -21,14 +21,9 @@
       "number": "39-23-6423122"
     },
     {
-      "id": "c461",
-      "name": "Evander Hulk",
-      "number": "040-900200112"
-    },
-    {
       "id": "0d4b",
       "name": "Chuck Spy",
-      "number": " 358700122982"
+      "number": "358-700122943"
     },
     {
       "id": "bec8",
@@ -46,14 +41,30 @@
       "number": "45-387123987"
     },
     {
-      "id": "6205",
-      "name": "Betty Newbie",
-      "number": "45-023138345"
-    },
-    {
       "id": "b633",
       "name": "Henry King",
-      "number": "45-12564732"
+      "number": "45-12564731"
+    },
+    {
+      "id": "5be7",
+      "name": "Natasha Romanoff",
+      "number": "45-234123542"
+    },
+    {
+      "id": "2920",
+      "name": "Betty Newbie",
+      "number": "34-123124533"
+    },
+    {
+      "id": "b22c",
+      "name": "Steve Rogers",
+      "number": "65-23412544"
+    },
+    {
+      "id": "43a0",
+      "name": "Peter Parker",
+      "number": "455-12313454"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
