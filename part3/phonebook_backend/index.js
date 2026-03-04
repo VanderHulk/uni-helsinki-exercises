@@ -24,6 +24,8 @@ let persons = [
     }
 ]
 
+app.use(express.json())
+
 app.get('/api/persons', (request, response) => {    
     response.json(persons)
 })
@@ -31,10 +33,64 @@ app.get('/api/persons', (request, response) => {
 app.get('/api/info',  (request, response) => {
     const requestTime = new Date()
     response.send(`
-        <h2>Phonebook has info for ${persons.length} people.<h2>
+        <h2>Phonebook has info for ${persons.length} people.</h2>
         <h3>${requestTime}</h3>
     `)
 })
+
+app.get('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    const person = persons.find(p => p.id === id)
+
+    if(person) {
+        response.json(person)
+    } else {
+        response.status(404).end()
+    }
+})
+
+app.delete('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    persons = persons.filter(p => p.id !== id)
+
+    response.status(204).end()
+})
+
+const generateID = () => {
+    let randomId
+    do {
+        randomId = Math.ceil(Math.random() * 10000).toString()
+    } while(persons.some(p => p.id === randomId))
+
+    return randomId
+}
+
+const validateName = (name, list) => {
+    const trimmedName = name.toLowerCase().trim()    
+    return list.find(p => p.name.toLowerCase() === trimmedName)
+}
+
+app.post('/api/persons', (request, response) => {
+    const { name, number } = request.body
+    const existingPerson = validateName(name, persons)
+    // console.log(validateName(name))
+
+    if(!name) return response.status(400).json({error: 'name missing'})
+    if(!number) return response.status(400).json({error: 'number missing'})
+    
+    if(existingPerson) return response.status(400).json({error: 'name must be unique'})
+
+    const person = {
+        name,
+        number,
+        id: generateID()
+    }
+    
+    persons = persons.concat(person)  
+    response.status(201).json(person)
+})
+
+// console.log(generateID())
 
 const PORT = 3001
 app.listen(PORT)
