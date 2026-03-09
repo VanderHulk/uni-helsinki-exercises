@@ -47,6 +47,16 @@ Note: Persons is stored in-memory and resets when the server restarts.
 13. validate required fields and check for duplicate name
 14. error handling
 
+**Exercise 3.7**
+
+15. `npm install morgan`
+16. ```javascript
+    const morgan = require('morgan')
+    app.use(morgan('tiny'))
+    ```
+**Exercise 3.8**
+
+
 ---
 
 ## HTTP Status Codes:
