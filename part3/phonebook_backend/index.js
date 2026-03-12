@@ -30,6 +30,12 @@ morgan.token('body', (req) => JSON.stringify(req.body))
 
 const customMorgan = ':method :url :status :res[content-length] - :response-time ms :body'
 
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(express.static('dist'))
+
 // express.json() parses the body
 app.use(express.json())
 
@@ -101,8 +107,9 @@ app.post('/api/persons', (request, response) => {
     response.status(201).json(person)
 })
 
-// console.log(generateID())
+// Catch-all for unknown routes must come LAST
+app.use(unknownEndpoint)
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
