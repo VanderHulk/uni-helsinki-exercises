@@ -66,7 +66,7 @@ Note: Persons is stored in-memory and resets when the server restarts.
     app.use(morgan(customMorgan))
     ```
 
-**Exercise 3.9**
+**Exercise 3.9-3.11**
 
 18. change baseUrl to relative path '/api/persons' (part2/phonebook/src/services/phonebook.js) 
     `const baseUrl = '/api/persons'`
@@ -94,6 +94,40 @@ Note: Persons is stored in-memory and resets when the server restarts.
           },
         })
     ```
+    **RENDER DEPLOYMENT:** 
+    1. Sign-up/Log-in at Render.com
+    2. connect github repository (public on free plan) to Render, 
+    3. configure new Web Service according to GitHub setup and app's package.json script setup
+        - Root directory: point to your backend repo.
+        - Build command: npm run build (or a no-op if dist/ already exists).
+        - Start command: npm run start.
+    4. Ensure dist/ is included in the backend repo (so Express can serve the frontend).
+    5. Deploy the service
+
+**Exercise 3.12**
+
+23. `npm install mongoose`
+24. setup and define process.argv variables
+25. define url to connect to mongoDB Atlas
+26. turn-off strict filtering (allows queries that don’t match the schema strictly)
+    `mongoose.set('strictQuery', false)`
+27. setup connection (family: 4 forces IPv4, avoids some network issues)
+    `mongoose.connect(url, { family: 4 })`
+28. define schema, defines the shape of the documents in MongoDB.
+    ```javascript
+    const phonebookSchema = new mongoose.Schema({
+        name: String,
+        number: String,
+    })
+    ```
+29. connect schema to MongoDB collection to interact with the database
+    ```javascript
+    const Contact = mongoose.model('Contact', phonebookSchema)
+    ```
+30. define contact object
+31. save new contact and display all contacts after
+32. close database connection
+
 ---
 
 ## HTTP Status Codes:
