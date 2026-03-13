@@ -7,7 +7,7 @@
   "type": "commonjs",
   "main": "node index.js",
   "scripts": {
-    "build:ui": "rm -rf dist && cd ../../part2/phonebook && npm run build && cp -r dist ../../part3/phonebook_backend",    
+    "build:ui": "rm -rf dist && cd ../../part2/phonebook && npm run build && cp -r dist ../../part3/phonebook_backend",
     "build": "npm run build:ui && echo 'Frontend copied into backend for Render.'",
     "start": "node index.js",
     "dev": "nodemon index.js",
@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "express": "^5.2.1",
+    "mongoose": "^9.3.0",
     "morgan": "^1.10.1"
   },
   "keywords": []
