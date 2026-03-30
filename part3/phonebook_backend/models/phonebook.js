@@ -28,4 +28,4 @@ phonebookSchema.set('toJSON', {
     }
 })
 
-module.exports = mongoose.model('Contacts', phonebookSchema)
+module.exports = mongoose.model('Contact', phonebookSchema)
