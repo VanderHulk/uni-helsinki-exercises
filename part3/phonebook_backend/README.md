@@ -128,6 +128,22 @@ Note: Persons is stored in-memory and resets when the server restarts.
 31. save new contact and display all contacts after
 32. close database connection
 
+**Exercise 3.13**
+
+33. create a module (/models/phonebook.js) for database connection
+34. import `const Contact = require('./models/phonebook')` to index.js
+35. `npm install dotenv` and import `require('dotenv').config()` to index.js
+36. create .env file to store sensitive data and add the file to .gitignore
+
+**Exercise 3.14**
+37. refactor index.js so that the data is fetched from the database
+38. remove generateID, it will be auto generated
+39. refactor POST request to save new data to the database
+40. refactor PUT request to update existing database
+
+**Exercise 3.15**
+41. refactor DELETE request to delete entry from the database
+
 ---
 
 ## HTTP Status Codes:
