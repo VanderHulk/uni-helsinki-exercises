@@ -36,6 +36,16 @@ const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
 }
 
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    }
+
+    next(error)
+}
+
 app.use(express.static('dist'))
 
 // express.json() parses the body
@@ -61,18 +71,20 @@ app.get('/api/info',  (request, response) => {
     })    
 })
 
-app.get('/api/persons/:id', (request, response) => {     
+app.get('/api/persons/:id', (request, response, next) => {     
 
     Contact.findById(request.params.id)
         .then(contact => {
-            response.json(contact)
+            if (contact) {
+                response.json(contact)
+            } else {
+                response.status(404).end()
+            }
         })
-        .catch(error => {
-            response.status(404).end()
-        })        
+        .catch(error => next(error))        
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
 
     Contact.findByIdAndDelete(id)
@@ -80,9 +92,7 @@ app.delete('/api/persons/:id', (request, response) => {
             response.status(204).end()
             console.log(`${id} has been deleted`)
         })
-        .catch(error => {
-            response.status(404).end()
-        })
+        .catch(error => next(error))
 })
 
 // REMOVED id will be auto generated
@@ -130,30 +140,31 @@ app.post('/api/persons', (request, response) => {
         })
 })
 
-app.put('/api/persons/:id', (request, response) => {
+app.put('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
     const { number } = request.body
 
     console.log('new number', number)
 
     Contact.findById(id)
-        .then(note => {
-            const changedContact = { number: number }
-            return Contact.findByIdAndUpdate(id, changedContact, { returnDocument: 'after' })
-        })
-        .then(result => {
-            if(!result) {
+        .then(contact => {
+            if (!contact) {
                 return response.status(404).json({ error: 'Contact not found' })
             }
-            response.json(result)
-        })
-        .catch(error => {
-            response.status(500).json({ error: 'something went wrong' })
-        })
+
+            contact.number = number
+
+            return contact.save().then((updatedContact) => {
+                response.json(updatedContact)
+            })
+        })        
+        .catch(error => next(error))
 })
 
 // Catch-all for unknown routes must come LAST
 app.use(unknownEndpoint)
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
