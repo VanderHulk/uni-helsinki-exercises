@@ -167,7 +167,30 @@ return contact.save().then((updatedContact) => {
 
 **Exercise 3.18**
 
-44. Test HTTP GET api/persons/:id request with browser and Postman, worked!
+44. test HTTP GET api/persons/:id request with browser and Postman, worked!
+
+**Exercise 3.19**
+
+45. refactor frontend to display error message addContact() and Notification.jsx
+46. define validation rules for each field in phonebookSchema
+47. add ValidationError to errorHandler
+
+**Exercise 3.20**
+
+48. create own custom validator for number
+```javascript
+validate: {
+    validator: function(v) {                                
+        return /^\d{2,3}-\d{6,}$/.test(v)
+    },
+    message: props => `${props.value} is not a valid phone number! Format: [2-3 digits]-[6-8 digits]`
+},
+```
+
+**Exercise 3.21**
+
+49. build new dist and run tests
+50. pushed to github and render
 
 ---
 

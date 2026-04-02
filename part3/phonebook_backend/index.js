@@ -41,6 +41,9 @@ const errorHandler = (error, request, response, next) => {
 
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
+        // console.log('ERRORS', typeof error)
+        return response.status(400).json({ error: error })
     }
 
     next(error)
@@ -110,12 +113,9 @@ app.delete('/api/persons/:id', (request, response, next) => {
 //     return list.find(p => p.name.toLowerCase() === trimmedName)
 // }
 
-app.post('/api/persons', (request, response) => {    
+app.post('/api/persons', (request, response, next) => {    
     
-    const { name, number } = request.body
-    
-    if(!name) return response.status(400).json({ error: 'name missing' })
-    if(!number) return response.status(400).json({ error: 'number missing' })
+    const { name, number } = request.body    
     
     // findOne() searches for existing contact by name
     Contact.findOne({ name })
@@ -129,15 +129,12 @@ app.post('/api/persons', (request, response) => {
                 number: number,
                 // id: generateID()
             })
-            return person.save()            
+            return person.save()          
         })
         .then(savedContact => {
             response.json(savedContact)
         })
-        .catch(error => {
-            console.error(error)
-            response.status(500).json({ error: 'something went wrong' })
-        })
+        .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
