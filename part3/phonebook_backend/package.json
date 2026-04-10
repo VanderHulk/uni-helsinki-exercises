@@ -11,7 +11,8 @@
     "build": "npm run build:ui && echo 'Frontend copied into backend for Render.'",
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
   },
   "dependencies": {
     "dotenv": "^17.3.1",
@@ -19,5 +20,11 @@
     "mongoose": "^9.3.0",
     "morgan": "^1.10.1"
   },
-  "keywords": []
+  "keywords": [],
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "eslint": "^10.2.0",
+    "globals": "^17.4.0"
+  }
 }

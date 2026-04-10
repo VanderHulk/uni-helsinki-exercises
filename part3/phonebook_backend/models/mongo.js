@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 
 if(process.argv.length < 5) {
-    console.log('give password, name, and number as arguments')
-    process.exit(1)
+  console.log('give password, name, and number as arguments')
+  process.exit(1)
 }
 
 const password = process.argv[2]
@@ -19,25 +19,25 @@ mongoose.set('strictQuery', false)
 mongoose.connect(url, { family: 4 })
 
 const phonebookSchema = new mongoose.Schema({
-    name: String,
-    number: String,
+  name: String,
+  number: String,
 })
 
 const Contact = mongoose.model('Contact', phonebookSchema)
 
 const contact = new Contact({
-    name,
-    number,
+  name,
+  number,
 })
 
 contact.save()
-    .then(result => {
-        console.log(result, '\nContact saved!')
-        return Contact.find({})
+  .then(result => {
+    console.log(result, '\nContact saved!')
+    return Contact.find({})
+  })
+  .then(result => {
+    result.forEach(contact => {
+      console.log(contact)
     })
-    .then(result => {
-        result.forEach(contact => {
-            console.log(contact)
-        })
-    })
-    .finally(() => mongoose.connection.close())
+  })
+  .finally(() => mongoose.connection.close())

@@ -192,6 +192,20 @@ validate: {
 49. build new dist and run tests
 50. pushed to github and render
 
+**Exercise 3.22**
+
+51. Install ESLint as a development dependency
+`npm install eslint @eslint/js --save-dev`
+52. Add script in package.json
+    "lint": "eslint ."
+53. Initialize a default ESlint configuration
+`npx eslint --init`
+    eslint.config.mjs file is created
+54. Install @stylistic/eslint-plugin
+`npm install @stylistic/eslint-plugin --save-dev`
+55. Configure eslint.config.mjs
+56. Fix errors
+
 ---
 
 ## HTTP Status Codes:
