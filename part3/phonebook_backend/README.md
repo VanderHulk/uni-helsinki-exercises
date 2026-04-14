@@ -6,6 +6,7 @@ Node.js and Express: Exercises 3.1-3.8
 Deploying app to internet: Exercises 3.9-3.11
  ## ONLINE APPLICATION : https://fullstackopen-pjbo.onrender.com
 Saving data to MongoDB: Exercises 3.12-3.18
+Validation and ESLint: Exercises 3.19-3.22
 
 ---
 
