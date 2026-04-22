@@ -20,6 +20,8 @@ mongoose
 // middleware that automatically parses incoming JSON request bodies
 // parses, reading data and turning it into a format the program can work with
 app.use(express.json())
+
+// this is were the route handlers get mounted
 app.use('/api/blogs', blogsRouter)
 
 module.exports = app

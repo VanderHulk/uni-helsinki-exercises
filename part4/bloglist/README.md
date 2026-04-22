@@ -26,3 +26,16 @@ FullStack Open - Part 4
 6. create controllers/bloglists for request handling logic
 7. create app.js for express app configuration and db connection
 8. index.js is now just an entry point and for starting the server
+
+**Exercise 4.3-4.7**
+
+9. create utils/list_helper.js
+10. define dummy function that receives an array of blog as a parameter, always returns the value 1
+11. create tests/dummy.test.js
+12. verify test configuration, worked
+13. create helper functions for analyzing blog data:
+    - dummy, returns the constant value 1 regardless of input
+    - totalLikes, calculates the total number of likes across all blog entries
+    - favoriteBlog, returns the blog with the highest number of likes
+    - mostBlogs, determines the author with the highest number of blog posts and returns both the author and count
+    - mostLikes, determines the author whose blogs have the highest total number of likes and returns both the author and total likes
