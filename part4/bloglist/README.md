@@ -39,3 +39,17 @@ FullStack Open - Part 4
     - favoriteBlog, returns the blog with the highest number of likes
     - mostBlogs, determines the author with the highest number of blog posts and returns both the author and count
     - mostLikes, determines the author whose blogs have the highest total number of likes and returns both the author and total likes
+
+**Exercise 4.8-5.12**
+
+14. `npm install cross-env` - used to set NODE_ENV cross-platform (OS)
+15. define the execution mode of the application with NODE_ENV environemtn variable in package.json
+16. refactor utils/config.js
+17. set separate variables in .env file for testing and for development
+18. `npm install --save-dev supertest`
+19. create JSON array for testing (tests/test_helper.js)
+20. create blog_api.test.js
+    - uses SuperTest to make API requests
+    - uses .then() for asynchronous handling
+    - sets up test database with beforeEach
+    - verifies response from /api/blogs
