@@ -53,3 +53,42 @@ FullStack Open - Part 4
     - uses .then() for asynchronous handling
     - sets up test database with beforeEach
     - verifies response from /api/blogs
+
+---
+
+**FOR REFERENCE AND LEARNING PURPOSES**
+
+.then() version
+
+```javascript
+beforeEach(() => {
+    return BlogList.deleteMany({})
+      .then(() => {
+        console.log('BlogList cleared')
+        const blogObjects = helper.initialBlog
+          .map(blog => new BlogList(blog))
+        
+        const promiseArray = blogObjects.map(blog => blog.save())
+        return Promise.all(promiseArray)
+      })
+})
+
+test('amount of blogs returned', () => {
+    return api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+      .then(response => {
+        const blogArray = response.body
+        console.log('response.body:', blogArray)
+        assert.strictEqual(blogArray.length, helper.initialBlog.length)
+      })
+})
+
+after(() => {
+    return mongoose.connection.close()
+      .then(() => {
+        console.log('connection closed')
+      })
+})
+```
