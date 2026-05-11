@@ -1,6 +1,6 @@
 const BlogList = require('../models/bloglist')
 
-const initialBlog = [
+const initialBlogs = [
   {    
     title: "Example Blog Post",
     author: "John Doe",
@@ -27,6 +27,14 @@ const initialBlog = [
   },
 ]
 
+const blogsInDb = () => {
+  return BlogList.find({})
+    .then(response => {      
+      return response.map(blog => blog.toJSON())
+    })      
+}
+
 module.exports = {
-    initialBlog
+    initialBlogs,
+    blogsInDb
 }

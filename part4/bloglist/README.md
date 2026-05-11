@@ -53,6 +53,7 @@ FullStack Open - Part 4
     - uses .then() for asynchronous handling
     - sets up test database with beforeEach
     - verifies response from /api/blogs
+21. refactor blog_api.test.js to use async/await
 
 ---
 
