@@ -40,7 +40,7 @@ FullStack Open - Part 4
     - mostBlogs, determines the author with the highest number of blog posts and returns both the author and count
     - mostLikes, determines the author whose blogs have the highest total number of likes and returns both the author and total likes
 
-**Exercise 4.8-5.12**
+**Exercise 4.8-4.12**
 
 14. `npm install cross-env` - used to set NODE_ENV cross-platform (OS)
 15. define the execution mode of the application with NODE_ENV environemtn variable in package.json
@@ -54,6 +54,21 @@ FullStack Open - Part 4
     - sets up test database with beforeEach
     - verifies response from /api/blogs
 21. refactor blog_api.test.js to use async/await
+22. blog ID transformation
+    - convert _id to id
+    - remove _id and _v
+      handle using schema toJSON transform
+23. blog creation increases DB size
+    - POST /api/blogs
+    - verify blog count increases by 1
+24. default likes = 0
+    - missing likes should become 0
+    - implement via schema default
+      `likes: { type: Number, default: 0 }`
+25. validation for required fields 
+    - missing title or url = 400 Bad Request
+    - handle inside /controller/bloglists.js
+26. refactor all .then() to async/await
 
 ---
 
@@ -84,6 +99,62 @@ test('amount of blogs returned', () => {
         console.log('response.body:', blogArray)
         assert.strictEqual(blogArray.length, helper.initialBlog.length)
       })
+})
+
+test('new blog post created', () => {
+  const newBlog = {
+    title: 'Creating new blogs',
+    author: "Jane Doe",
+    url: "https://postit.com",
+    likes: 8
+  }
+  return api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)    
+    .then(() => {
+      return helper.blogsInDb()
+    })
+    .then(blogsAtEnd => {
+      console.log(`${blogsAtEnd.length} === ${helper.initialBlogs.length + 1}`)
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+
+      const titles = blogsAtEnd.map(b => b.title)
+      console.log(titles)
+      assert(titles.includes('Creating new blogs'))      
+    })
+})
+
+test('blog without likes', () => {
+  const newBlog = {
+    title: 'Blogs without likes',
+    author: "Jane Doe",
+    url: "https://postit.com",
+  }
+
+  return api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+    .then(response => {
+      console.log(response.body) 
+      assert.strictEqual(response.body.likes, 0)      
+    })
+})
+
+test('missing title or url error 400', () => {
+  const newBlog = {    
+    author: "Jane Doe",
+    url: "https://postit.com",
+    likes: 10
+  }
+
+  return api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)    
 })
 
 after(() => {

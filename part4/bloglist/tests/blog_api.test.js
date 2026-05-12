@@ -10,7 +10,7 @@ const BlogList = require('../models/bloglist')
 
 const api = supertest(app)
 
-beforeEach(async () => {
+beforeEach(async() => {
   await BlogList.deleteMany({})
     console.log('BlogList cleared')
 
@@ -48,32 +48,62 @@ test('id as the unique identifier', async() => {
   })  
 })
 
-test('new blog post created', () => {
+test('new blog post created', async() => {
   const newBlog = {
     title: 'Creating new blogs',
     author: "Jane Doe",
     url: "https://postit.com",
     likes: 8
   }
-  return api
+
+  const response = await api  
     .post('/api/blogs')
     .send(newBlog)
     .expect(201)
-    .expect('Content-Type', /application\/json/)    
-    .then(() => {
-      return helper.blogsInDb()
-    })
-    .then(blogsAtEnd => {
-      console.log(`${blogsAtEnd.length} === ${helper.initialBlogs.length + 1}`)
-      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+    .expect('Content-Type', /application\/json/)
+    
+    const blogsAtEnd = await helper.blogsInDb()
 
-      const titles = blogsAtEnd.map(b => b.title)
+    console.log(`${blogsAtEnd.length} === ${helper.initialBlogs.length + 1}`)
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+
+    const titles = blogsAtEnd.map(b => b.title)
       console.log(titles)
-      assert(titles.includes('Creating new blogs'))      
-    })
+      assert(titles.includes('Creating new blogs'))
 })
 
-after(async () => {
+
+test('blog without likes', async() => {
+  const newBlog = {
+    title: 'Blogs without likes',
+    author: "Jane Doe",
+    url: "https://postit.com",
+  }
+
+  const response = await api 
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+    console.log(response.body) 
+    assert.strictEqual(response.body.likes, 0)
+})
+
+test('missing title or url error 400', async() => {
+  const newBlog = {    
+    author: "Jane Doe",
+    url: "https://postit.com",
+    likes: 10
+  }
+  
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)    
+})
+
+after(async() => {
     await mongoose.connection.close()
     console.log('connection closed')
 })

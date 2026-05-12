@@ -15,6 +15,12 @@ blogsRouter.get('/', (req, res) => {
 blogsRouter.post('/', (req, res) => {
     const blog = new BlogList(req.body)
 
+    // console.log('blogsRouter.post', req.body)
+    
+    if(!req.body.title || !req.body.url) {
+        return res.status(400).end()
+    }
+    
     blog.save().then(result => {
         res.status(201).json(result)
     })
