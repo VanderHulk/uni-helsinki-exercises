@@ -103,6 +103,45 @@ test('missing title or url error 400', async() => {
     .expect(400)    
 })
 
+test('updating likes in a single blog post', async() => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToUpdate = blogsAtStart[0]  
+
+  console.log('blogsAtStart', blogsAtStart)
+
+  const response = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send({ likes: 15 })
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    console.log('blogsAtEnd', blogsAtEnd[0])
+  
+    assert.strictEqual(blogsAtEnd[0].likes, 15)  
+})
+
+test('deleting a single blog post', async() => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+
+  console.log('blogToDelete', blogToDelete.id)
+
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+  
+    const blogsAtEnd = await helper.blogsInDb()
+
+    console.log('blogsAtEnd', blogsAtEnd)
+
+    const ids = blogsAtEnd.map(blog => blog.id)
+    assert(!ids.includes(blogToDelete.id))
+
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length-1)
+})
+
 after(async() => {
     await mongoose.connection.close()
     console.log('connection closed')

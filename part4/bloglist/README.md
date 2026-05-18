@@ -70,6 +70,19 @@ FullStack Open - Part 4
     - handle inside /controller/bloglists.js
 26. refactor all .then() to async/await
 
+**Exercise 4.13-4.14**
+
+27. add HTTP routes for PUT and DELETE requests in controllers/bloglists.js
+28. make sure to transform MongoDB metadata into a clean JSON format for API responses like _id to id (e.g. convert _id → id, remove __v)
+29. deleting a single blog post
+    - DELETE /api/blogs/:id
+    - verify blog count decreases by 1
+30. updating likes in a single blog post
+    - PUT /api/blogs/:id
+    - send request body ({ likes: 15 })
+    - verify the database reflects the updated likes value
+
+
 ---
 
 **FOR REFERENCE AND LEARNING PURPOSES**
