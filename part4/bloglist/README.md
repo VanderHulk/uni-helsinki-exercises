@@ -82,6 +82,11 @@ FullStack Open - Part 4
     - send request body ({ likes: 15 })
     - verify the database reflects the updated likes value
 
+**Exercise 4.15-4.23**
+
+31. `npm install bcrypt`
+32. add schema model for user models/user.js
+33. add HTTP routes for user controllers/users.js
 
 ---
 

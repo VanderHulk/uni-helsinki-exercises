@@ -4,6 +4,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const config = require('./utils/config')
 const blogsRouter = require('./controllers/bloglists')
+const usersRouter = require('./controllers/users')
 
 const app = express()
 
@@ -23,5 +24,6 @@ app.use(express.json())
 
 // this is were the route handlers get mounted
 app.use('/api/blogs', blogsRouter)
+app.use('/api/users', usersRouter)
 
 module.exports = app
