@@ -42,7 +42,7 @@ test('id as the unique identifier', async() => {
   const response = await api
     .get('/api/blogs')
   
-  response.body.forEach(blog => {    
+  response.body.forEach(blog => {
     assert.notStrictEqual(blog.id, undefined) 
     assert.strictEqual(blog._id, undefined)
   })  

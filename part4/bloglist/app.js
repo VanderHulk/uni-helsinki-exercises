@@ -3,6 +3,8 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const config = require('./utils/config')
+const logger = require('./utils/logger')
+const middleware = require('./utils/middleware')
 const blogsRouter = require('./controllers/bloglists')
 const usersRouter = require('./controllers/users')
 
@@ -21,9 +23,12 @@ mongoose
 // middleware that automatically parses incoming JSON request bodies
 // parses, reading data and turning it into a format the program can work with
 app.use(express.json())
-
+app.use(middleware.requestLogger)
 // this is were the route handlers get mounted
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
+
+app.use(middleware.unknownEndpoint)
+app.use(middleware.errorHandler)
 
 module.exports = app

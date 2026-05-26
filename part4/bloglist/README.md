@@ -88,6 +88,12 @@ FullStack Open - Part 4
 32. add schema model for user models/user.js
 33. add HTTP routes for user controllers/users.js
 
+34. refactor userSchema username to have a minLength of 3
+35. create logging functions utils/logger.js
+36. add custom middleware to log http request info and errors
+37. refactor controllers/users.js to validate username and password length before saving
+38. mount custom middleware in the app
+
 ---
 
 **FOR REFERENCE AND LEARNING PURPOSES**
@@ -182,3 +188,24 @@ after(() => {
       })
 })
 ```
+
+---
+
+**GOOD TO KNOW INFO**
+
+`bcrypt` is a password hashing library. It turns password into a scrambled irreversible string.
+  - `saltRounds` controls how computationally expensive the hashing is
+     the higher the number the more secure but slower
+     Common values:
+     - 10 -> very common default
+     - 12 -> stronger, slower
+     - 14+ -> pretty heavy
+
+    `What is salt?`
+     It is random data added to the password before hashing.
+
+    `What is hashing?`
+     Hashing is a way of turning data into a fixed, scrambled fingerprint that cannot be turned back into the original data. - What you get is called a Hash.
+
+    `Why is bcrypt expensive?`
+     It means computationally costly. It takes time and CPU effort. bcrypt is intentionally slow. The slowness is the whole security trick. When you set saltRounds = 10, it basically means "Do a bunch of repeated hashing steps 2¹⁰ times (≈ 1024 rounds of work).” 
