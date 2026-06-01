@@ -93,6 +93,9 @@ FullStack Open - Part 4
 36. add custom middleware to log http request info and errors
 37. refactor controllers/users.js to validate username and password length before saving
 38. mount custom middleware in the app
+39. create user_api.test.js
+40. add usersInDb function to fetch users from the database
+41. add errorHandler for username uniqueness
 
 ---
 
@@ -208,4 +211,8 @@ after(() => {
      Hashing is a way of turning data into a fixed, scrambled fingerprint that cannot be turned back into the original data. - What you get is called a Hash.
 
     `Why is bcrypt expensive?`
-     It means computationally costly. It takes time and CPU effort. bcrypt is intentionally slow. The slowness is the whole security trick. When you set saltRounds = 10, it basically means "Do a bunch of repeated hashing steps 2¹⁰ times (≈ 1024 rounds of work).” 
+     It means computationally costly. It takes time and CPU effort. bcrypt is intentionally slow. The slowness is the whole security trick. When you set saltRounds = 10, it basically means "Do a bunch of repeated hashing steps 2¹⁰ times (≈ 1024 rounds of work).”
+
+About testing:
+
+`--test-concurrency=1` tests will be executed sequentially

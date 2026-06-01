@@ -144,5 +144,5 @@ test('deleting a single blog post', async() => {
 
 after(async() => {
     await mongoose.connection.close()
-    console.log('connection closed')
+    console.log('blog connection closed')
 })
