@@ -3,25 +3,42 @@
 // Router is a smaller, modular version of the Express application, used to define route handlers for specific paths
 const blogsRouter = require('express').Router()
 const BlogList = require('../models/bloglist')
+const User = require('../models/user')
 
 // .find({}) find all documents, returns a promise
 // {} empty filter, no conditions so all documents are returned
 blogsRouter.get('/', async (request, response) => {  
-  const blogs = await BlogList.find({})
+  const blogs = await BlogList
+    .find({}).populate('userID', { username: 1, name: 1 })
   response.json(blogs)
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const blog = new BlogList(request.body)
-
-  // console.log('blogsRouter.post', request.body)
-    
-  if(!request.body.title || !request.body.url) {
-    return response.status(400).end()
+  const body = request.body
+ 
+  const user = await User.findById(body.userID)
+  
+  // if userID cannot be found
+  if(!user) {
+    return response.status(400).json({ error: 'userID missing or not valid' })
   }
 
+  const blog = new BlogList({
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    userID: user._id,
+    likes: body.likes
+  })
+
   const savedBlog = await blog.save()
-  response.status(201).json(savedBlog) 
+  user.blogs = user.blogs.concat(savedBlog._id)
+  const savedUser = await user.save()
+
+  response.status(201).json({
+    savedBlog,
+    savedUser
+  })  
 })
 
 blogsRouter.put('/:id', async (request, response) => {

@@ -1,7 +1,13 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema(
-  {
+  {    
+    blogs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BlogList' // from the model name - mongoose.model('BlogList', bloglistSchema)
+      }
+    ],
     username: {
       type: String,
       minLength: 3,
@@ -10,13 +16,7 @@ const userSchema = new mongoose.Schema(
     },
     name: String,
     passwordHash: String,
-    blogs: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'BlogList' // from the model name - mongoose.model('BlogList', bloglistSchema)
-      }
-    ]
-  },
+  },  
   {
     timestamps: true
   }
