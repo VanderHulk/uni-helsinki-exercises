@@ -96,6 +96,19 @@ FullStack Open - Part 4
 39. create user_api.test.js
 40. add usersInDb function to fetch users from the database
 41. add errorHandler for username uniqueness
+42. add tests for user creation + validation (length + required fields)
+43. refactor BlogList and User schemas to support relationships
+44. refactor controllers to connect blogs ↔ users (bidirectional linking)
+45. `npm install jsonwebtoken`
+46. create controllers/login.js
+47. mount controllers/login in the app
+48. create a function to extract the token from the authorization header in controllers/login.js
+49. checks token validity with jwt.verify
+    `jwt.verify(getTokenFrom(request), process.env.SECRET)`
+    - checks if token was signed by your server
+    - checks if it was tampered with
+    - decodes it
+
 
 ---
 

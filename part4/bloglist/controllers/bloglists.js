@@ -4,6 +4,19 @@
 const blogsRouter = require('express').Router()
 const BlogList = require('../models/bloglist')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
+
+// extracts token from the Authorization Header
+const getTokenFrom = request => {
+  // gets the Bearer
+  const authorization = request.get('authorization')
+  
+  // checks the format and removes Bearer so you only get the token
+  if(authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
 
 // .find({}) find all documents, returns a promise
 // {} empty filter, no conditions so all documents are returned
@@ -15,8 +28,16 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
+
+  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+
+  // check if there is user id otherwise it is invalid
+  if(!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
  
-  const user = await User.findById(body.userID)
+  // replace -> const user = await User.findById(body.userID) with
+  const user = await User.findById(decodedToken.id)
   
   // if userID cannot be found
   if(!user) {
