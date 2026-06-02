@@ -108,6 +108,12 @@ FullStack Open - Part 4
     - checks if token was signed by your server
     - checks if it was tampered with
     - decodes it
+50. test valid JWT token allows blog creation
+51. test missing token and malformed token return unauthorized error
+52. move getTokenFrom function to middleware
+53. attach token to request object
+54. mount middleware.getTokenFrom in app
+55. request.token is now accessible in controllers
 
 
 ---
@@ -207,7 +213,9 @@ after(() => {
 
 ---
 
-**GOOD TO KNOW INFO**
+## **GOOD TO KNOW INFO**
+
+### BCRYPT
 
 `bcrypt` is a password hashing library. It turns password into a scrambled irreversible string.
   - `saltRounds` controls how computationally expensive the hashing is
@@ -226,6 +234,17 @@ after(() => {
     `Why is bcrypt expensive?`
      It means computationally costly. It takes time and CPU effort. bcrypt is intentionally slow. The slowness is the whole security trick. When you set saltRounds = 10, it basically means "Do a bunch of repeated hashing steps 2¹⁰ times (≈ 1024 rounds of work).”
 
-About testing:
+### TESTING
 
 `--test-concurrency=1` tests will be executed sequentially
+
+### MIDDLEWARE
+
+It is basically the backstage crew of the Express app. It can do almost anything that prepares, checks or reshapes a request before it reaches the route handler.
+
+Request flow:
+```
+request → middleware → middleware → route → response
+```
+
+`request.get()` is mainly a header reader. It finds data inside request.headers.

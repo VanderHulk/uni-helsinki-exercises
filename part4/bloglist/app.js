@@ -25,6 +25,7 @@ mongoose
 // parses, reading data and turning it into a format the program can work with
 app.use(express.json())
 app.use(middleware.requestLogger)
+app.use(middleware.getTokenFrom)
 // this is were the route handlers get mounted
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
