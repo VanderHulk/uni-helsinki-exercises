@@ -114,7 +114,14 @@ FullStack Open - Part 4
 53. attach token to request object
 54. mount middleware.getTokenFrom in app
 55. request.token is now accessible in controllers
+56. Refactor DELETE request in controllers/bloglists
+    - verify JWT token before processing delete request
+    - retrieve blog and user from the database
+    - allow deletion only if the authenticated user is the creator of the blog
+    - remove deleted blog reference from user's blogs array
+    - return appropriate status codes for unauthorized, forbidden, and missing resources
 
+PUSH TO GITHUB exercise 4.21
 
 ---
 
