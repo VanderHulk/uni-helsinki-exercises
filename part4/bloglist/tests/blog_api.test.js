@@ -2,27 +2,17 @@ const { test, before, beforeEach, after } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const bcrypt = require('bcrypt')
 
 const app = require('../app')
 const config = require('../utils/config')
 const helper = require('./test_helper')
-const BlogList = require('../models/bloglist')
+const User = require('../models/user')
 
 const api = supertest(app)
 
 beforeEach(async() => {
-  await BlogList.deleteMany({})
-    console.log('BlogList cleared')
-
-    /* const blogObjects = helper.initialBlogs
-      .map(blog => new BlogList(blog))
-    // .save() is async, it returns multiple promises, so it gives an array of pending save operations so you have to wait for all the operations to finish
-    // with await, there is a pause until all blogs have been saved in MongoDB
-    const promiseArray = blogObjects.map(blog => blog.save())
-    await Promise.all(promiseArray) */
-
-    // Mongoose async operation that inserts many documents at once
-    await BlogList.insertMany(helper.initialBlogs)
+  await helper.setupTestData()
 })
 
 test('amount of blogs returned', async() => {
@@ -34,7 +24,7 @@ test('amount of blogs returned', async() => {
     .expect('Content-Type', /application\/json/)
     
     // response.body exists, JSON parsing already succeeded
-    console.log('response.body:', response.body)
+    // console.log('response.body:', response.body)
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
@@ -49,6 +39,8 @@ test('id as the unique identifier', async() => {
 })
 
 test('new blog post created', async() => {
+  const token = await helper.loginUser()  
+
   const newBlog = {
     title: 'Creating new blogs',
     author: "Jane Doe",
@@ -58,22 +50,25 @@ test('new blog post created', async() => {
 
   const response = await api  
     .post('/api/blogs')
+    .set('Authorization', token)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
     
     const blogsAtEnd = await helper.blogsInDb()
 
-    console.log(`${blogsAtEnd.length} === ${helper.initialBlogs.length + 1}`)
+    // console.log(`${blogsAtEnd.length} === ${helper.initialBlogs.length + 1}`)
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
 
     const titles = blogsAtEnd.map(b => b.title)
-      console.log(titles)
+      // console.log(titles)
       assert(titles.includes('Creating new blogs'))
 })
 
 
 test('blog without likes', async() => {
+  const token = await helper.loginUser()
+
   const newBlog = {
     title: 'Blogs without likes',
     author: "Jane Doe",
@@ -82,15 +77,18 @@ test('blog without likes', async() => {
 
   const response = await api 
     .post('/api/blogs')
+    .set('Authorization', token)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-    console.log(response.body) 
-    assert.strictEqual(response.body.likes, 0)
+    // console.log('response.body', response.body) 
+    assert.strictEqual(response.body.savedBlog.likes, 0)
 })
 
 test('missing title or url error 400', async() => {
+  const token = await helper.loginUser()
+
   const newBlog = {    
     author: "Jane Doe",
     url: "https://postit.com",
@@ -99,6 +97,7 @@ test('missing title or url error 400', async() => {
   
   const response = await api
     .post('/api/blogs')
+    .set('Authorization', token)
     .send(newBlog)
     .expect(400)    
 })
@@ -107,7 +106,7 @@ test('updating likes in a single blog post', async() => {
   const blogsAtStart = await helper.blogsInDb()
   const blogToUpdate = blogsAtStart[0]  
 
-  console.log('blogsAtStart', blogsAtStart)
+  // console.log('blogsAtStart', blogsAtStart)
 
   const response = await api
     .put(`/api/blogs/${blogToUpdate.id}`)
@@ -117,29 +116,35 @@ test('updating likes in a single blog post', async() => {
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    console.log('blogsAtEnd', blogsAtEnd[0])
+    // console.log('blogsAtEnd', blogsAtEnd[0])
   
     assert.strictEqual(blogsAtEnd[0].likes, 15)  
 })
 
 test('deleting a single blog post', async() => {
+  const token = await helper.loginUser()
+
   const blogsAtStart = await helper.blogsInDb()
   const blogToDelete = blogsAtStart[0]
+  const blogUserID = blogToDelete.userID.toString()
 
-  console.log('blogToDelete', blogToDelete.id)
+
 
   await api
     .delete(`/api/blogs/${blogToDelete.id}`)
+    .set('Authorization', token)
     .expect(204)
-  
-    const blogsAtEnd = await helper.blogsInDb()
 
-    console.log('blogsAtEnd', blogsAtEnd)
+  const blogsAtEnd = await helper.blogsInDb()
+  const userAtEnd = await User.findById(blogUserID)  
 
-    const ids = blogsAtEnd.map(blog => blog.id)
-    assert(!ids.includes(blogToDelete.id))
+  const ids = blogsAtEnd.map(b => b.id)
+  assert(!ids.includes(blogToDelete.id))
 
-    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length-1)
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length-1)
+ 
+  const userBlogIds = userAtEnd.blogs.map(id => id.toString())  
+  assert(!userBlogIds.includes(blogUserID))
 })
 
 after(async() => {

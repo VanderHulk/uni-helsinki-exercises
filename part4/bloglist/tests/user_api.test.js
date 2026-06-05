@@ -4,20 +4,12 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 
 const app = require('../app')
-const config = require('../utils/config')
-const bcrypt = require('bcrypt')
 const helper = require('./test_helper')
-const User = require('../models/user')
 
 const api = supertest(app)
 
 beforeEach(async () => {
-  await User.deleteMany({})
-
-  const passwordHash = await bcrypt.hash('secret', 10)
-  const user = new User({ username: 'root', passwordHash })
-
-  await user.save()
+  await helper.setupTestData()
 })
 
 test('user creation succeeds', async() => {

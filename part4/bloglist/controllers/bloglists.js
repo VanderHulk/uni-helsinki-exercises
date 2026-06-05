@@ -3,8 +3,7 @@
 // Router is a smaller, modular version of the Express application, used to define route handlers for specific paths
 const blogsRouter = require('express').Router()
 const BlogList = require('../models/bloglist')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
+const middleware = require('../utils/middleware')
 
 // .find({}) find all documents, returns a promise
 // {} empty filter, no conditions so all documents are returned
@@ -14,23 +13,10 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   const body = request.body
 
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-
-  // check if there is user id otherwise it is invalid
-  if(!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
- 
-  // replace -> const user = await User.findById(body.userID) with
-  const user = await User.findById(decodedToken.id)
-  
-  // if userID cannot be found
-  if(!user) {
-    return response.status(400).json({ error: 'userID missing or not valid' })
-  }
+  const user = request.user
 
   const blog = new BlogList({
     title: body.title,
@@ -45,8 +31,7 @@ blogsRouter.post('/', async (request, response) => {
   const savedUser = await user.save()
 
   response.status(201).json({
-    savedBlog,
-    savedUser
+    savedBlog
   })  
 })
 
@@ -66,23 +51,10 @@ blogsRouter.put('/:id', async (request, response) => {
   response.status(200).json(updatedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
   const id = request.params.id
 
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-
-  // check if there is user id otherwise it is invalid
-  if(!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
- 
-  // replace -> const user = await User.findById(body.userID) with
-  const user = await User.findById(decodedToken.id)
-  
-  // if userID cannot be found
-  if(!user) {
-    return response.status(400).json({ error: 'userID missing or not valid' })
-  }
+  const user = request.user  
 
   const blog = await BlogList.findById(id)
 
@@ -90,13 +62,9 @@ blogsRouter.delete('/:id', async (request, response) => {
     return response.status(404).end()
   }
 
-  console.log('blog', blog)
-  console.log('user', user)
-  console.log('decodedToken.id', decodedToken.id)
-
-  if(blog.userID.toString() === decodedToken.id) {
-    await BlogList.findByIdAndDelete(id)
-    user.blogs = user.blogs.filter(i => i.toString() !== id)
+  if(blog.userID.toString() === user._id.toString()) {
+    await BlogList.findByIdAndDelete(id)    
+    user.blogs = user.blogs.filter(blogs => blogs.toString() !== id)    
     await user.save()
     response.status(204).end()
   } else {

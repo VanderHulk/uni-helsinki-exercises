@@ -120,8 +120,21 @@ FullStack Open - Part 4
     - allow deletion only if the authenticated user is the creator of the blog
     - remove deleted blog reference from user's blogs array
     - return appropriate status codes for unauthorized, forbidden, and missing resources
-
-PUSH TO GITHUB exercise 4.21
+57. Refactor authentication logic
+    - create `userExtractor` middleware to handle authenticated user extraction.
+    - move duplicated JWT verification and user lookup logic from controllers into middleware.
+    - attach the authenticated user to `request.user`.
+    - apply `userExtractor` only to protected routes (`POST` and `DELETE`).
+    - ensure public routes such as `GET /api/blogs` continue to work without authentication.
+58. Delete authorization    
+    - refactor blog deletion to use `request.user`.
+    - verify that only the owner of a blog can delete it.
+    - return `403 Forbidden` when a user attempts to delete a blog they do not own.
+59. Testing
+    - update integration tests to include authentication tokens where required.
+    - refactor test setup to create users and blogs with proper ownership relationships.
+    - verify blog creation, deletion, and authorization behavior through automated tests.
+    - ensure all tests pass for `blog_api.test.js` and `user_api.test.js`.
 
 ---
 
@@ -241,6 +254,25 @@ after(() => {
     `Why is bcrypt expensive?`
      It means computationally costly. It takes time and CPU effort. bcrypt is intentionally slow. The slowness is the whole security trick. When you set saltRounds = 10, it basically means "Do a bunch of repeated hashing steps 2¹⁰ times (≈ 1024 rounds of work).”
 
+### JWT JSON Web Token
+
+What does an authorization contain?
+```
+Example: 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+It contains encoded data like: 
+```
+{
+  "id": "64a1f9...",
+  "username": "alice",
+  "iat": 1710000000,
+  "exp": 1710003600
+}
+```
+- It is signed, not encrypted
+- Anyone can decode it, but only your server can verify it
+
 ### TESTING
 
 `--test-concurrency=1` tests will be executed sequentially
@@ -255,3 +287,8 @@ request → middleware → middleware → route → response
 ```
 
 `request.get()` is mainly a header reader. It finds data inside request.headers.
+
+### LESSONS LEARNED
+- Middleware registered with `app.use()` affects every matching request.
+- Authentication middleware should only be applied to routes that require an authenticated user.
+- Integration tests help reveal middleware placement issues and authorization edge cases.
