@@ -135,6 +135,38 @@ FullStack Open - Part 4
     - refactor test setup to create users and blogs with proper ownership relationships.
     - verify blog creation, deletion, and authorization behavior through automated tests.
     - ensure all tests pass for `blog_api.test.js` and `user_api.test.js`.
+60. Test refactor and isolation fixes
+    - identify that tests pass individually but fail when running the full test suite
+    - discover race conditions caused by concurrent execution of test files in Node test runner
+    - fix shared database state issues between test files
+    - standardize `beforeEach` cleanup across all test suites:
+      - clear `User` collection
+      - clear `BlogList` collection
+    - introduce consistent test data setup using shared helper functions
+    - ensure each test starts with a predictable and isolated database state
+61. Centralized test data setup
+    - create `setupTestData` helper to initialize test environment
+    - refactor test setup to create:
+      - a test user
+      - initial blogs linked to the user via `userID`
+    - maintain consistency between `User.blogs` and `Blog.userID`
+    - remove duplicated setup logic from individual test files
+62. Blog-user relationship consistency in tests
+    - ensure each blog is explicitly assigned a `userID`
+    - update user document to include created blog IDs in `user.blogs`
+    - fix missing relationship synchronization between user and blogs in test database
+    - improve realism of test data to match production behavior
+63. Authentication handling in tests
+    - generate JWT tokens using `loginUser` helper
+    - attach tokens to protected requests using `Authorization` header
+    - ensure POST and DELETE blog routes are tested with valid authentication
+    - verify unauthorized requests are rejected correctly
+64. Node test runner behavior clarification
+    - learn that `.only` requires `--test-only` flag when using `node --test`
+    - run specific test files using `npm test -- <file>`
+    - confirm full suite execution requires consistent setup across all test files
+    - discover that test instability was caused by concurrent execution of test files
+    - resolve cross-file test interference by enforcing sequential execution using `--test-concurrency=1`
 
 ---
 
