@@ -1,16 +1,49 @@
-# React + Vite
+# Part 5: BlogList App  
+*A FullStack Open Course Exercise*
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This README contains an understanding of how the application works while completing Part 5.
 
-Currently, two official plugins are available:
+## Project Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. The project is created using Vite:
+   npm create vite@latest
 
-## React Compiler
+2. Unnecessary starter files are removed to keep the structure clean.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+3. Basic files include:
+   - index.html
+   - main.jsx
+   - App.jsx
 
-## Expanding the ESLint configuration
+4. Folders are created:
+   - components/ → UI components
+   - services/ → backend API calls
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## How React starts the app
+
+5. index.html provides a single HTML container (#root).
+
+6. React mounts the app into this container using ReactDOM.createRoot().
+
+7. After mounting, React manages everything inside the root div.
+
+8. App.jsx is the root component where the application structure starts and other components are connected.
+
+## Backend communication
+
+9. services/blogs.js uses Axios to communicate with the backend:
+   - GET → fetch blogs
+   - POST → create blog
+   - PUT → update blog
+   - DELETE → remove blog
+
+10. services/login.js handles login:
+   - Sends a POST request with credentials
+   - Backend validates and responds (usually with token or user info)
+
+## Key learning idea
+
+- React UI is separate from backend logic
+- components/ handles UI
+- services/ handles API requests
+- App.jsx connects everything together
