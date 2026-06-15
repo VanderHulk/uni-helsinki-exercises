@@ -7,10 +7,9 @@ const App = () => {
   const [blog, setBlog] = useState({
     title: '',
     author: '',
-    url: '',
-    likes: 0
+    url: ''    
   })
-  const [blogs, setBlogs] = useState([])
+  const [blogs, setBlogs] = useState([])  
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -33,38 +32,71 @@ const App = () => {
     }
   }, [])
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-
+  const addBlog = async () => {    
     const returnedBlog = await blogService.create(blog)
     setBlogs(prevBlogs => prevBlogs.concat(returnedBlog))
     setBlog({
       title: '',
       author: '',
-      url: '',
-      likes: 0
-    })
+      url: ''      
+    })    
+  }
+
+  const addLikes = async (id) => {
+    const foundBlog = blogs.find(b => b.id === id)
+    const updatedBlog = { 
+        ...foundBlog, 
+        likes: foundBlog.likes + 1
+    }
+    
+    const returnedBlog = await blogService.updateLikes(id, updatedBlog)
+    setBlogs(prev => prev.map(b => 
+      b.id !== id ? b : returnedBlog
+    ))
+  }
+
+  const updateABlog = async (event, id) => {
+    event.preventDefault()
+    console.log('updateABlog id', id)
+
+    
+    const foundBlog = blogs.find(b => b.id === id)
+    const updatedBlog = {
+      ...foundBlog,
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+    }
+
+    const returnedBlog = await blogService.update(id, updatedBlog)
+    setBlogs(prev => prev.map(b => 
+      b.id !== id ? b : returnedBlog
+    ))
+
+    handleClear()
   }
   
 // components
-  const Blogs = () => (
-    <ul>
-      <h3>List</h3>
-      {blogs.map(({ id, title, author, url, likes }) => (                
-        <li key={id}>
-          <p>{`Title: ${title}`}</p>
-          <p>{`Author: ${author}`}</p> 
-          <p>{`URL: ${url}`}</p>
-          <p>{`Likes: ${likes}`}</p>
-          <div className='emojis'>
-            <button>👍</button>
-            <button>✏️</button>
-            <button>🗑️</button>
-          </div>
-        </li>
-      ))}      
-    </ul>    
-  )
+  const Blogs = () => {
+    return (
+      <ul>
+        <h3>List</h3>
+        {blogs.map(({ id, title, author, url, likes }) => (                
+          <li key={id}>
+            <p>{`Title: ${title}`}</p>
+            <p>{`Author: ${author}`}</p> 
+            <p>{`URL: ${url}`}</p>
+            <p>{`Likes: ${likes}`}</p>
+            <div className='emojis'>
+              <button type='button' onClick={() => addLikes(id)}>👍</button>
+              <button type='button' onClick={() => handleUpdate(id)}>✏️</button>
+              <button type='button'>🗑️</button>
+            </div>
+          </li>
+        ))}      
+      </ul>    
+    )
+  }
 
   const loginForm = () => (
     <div className='frm-login'>      
@@ -91,33 +123,45 @@ const App = () => {
     </div>  
   )
   
-  const BlogForm = () => (    
-    <div className='container'>      
-      <form>
+  const blogForm = () => (    
+    <>
+      <form onSubmit={handleSubmit}>
         <h3>Create a blog</h3>
         <label>
           <span className='lbl'>Title:</span>
-          <input type='text' />    
+          <input 
+            type='text' 
+            value={blog.title}
+            onChange={({ target }) => 
+              setBlog({...blog, title: target.value})
+            }
+          />    
         </label>
         <label>
           <span className='lbl'>Author:</span>
-          <input type='text' />    
+          <input 
+            type='text' 
+            value={blog.author}
+            onChange={({ target }) => 
+              setBlog({...blog, author: target.value})
+            }
+          />     
         </label>
         <label>
           <span className='lbl'>URL:</span>
-          <input type='text' />    
-        </label>
-        <label>
-          <span className='lbl'>Likes:</span>
-            <input type='text' />    
-        </label>
+          <input type='text' 
+            value={blog.url}
+            onChange={({ target }) => 
+              setBlog({...blog, url: target.value})
+            }
+          />  
+        </label>        
         <div className='btns'>
-          <button className='btn'>Save</button>
-          <button className='btn'>Clear</button>
+          <button className='btn' type="submit">{!blog.id ? 'Save' : 'Update'}</button>
+          <button className='btn' type="button" onClick={handleClear}>Clear</button>
         </div>
-      </form>
-      <Blogs /> 
-    </div>
+      </form>       
+    </>
   )
 
 // handlers
@@ -149,6 +193,33 @@ const App = () => {
     blogService.setToken(null)
     setUser(null)
   }
+
+  const handleSubmit = (event) => {
+    event.preventDefault()    
+    console.log('blogID: ', blog.id)
+
+    if(!blog.id) {
+      addBlog(event)
+    } else {      
+      updateABlog(event, blog.id)
+    }
+  }
+
+  const handleUpdate = (id) => {
+    // fill the blogform    
+    const foundBlog = blogs.find(b => b.id === id)
+    setBlog({
+      ...foundBlog
+    })    
+  }
+
+  const handleClear = () => {
+    setBlog({
+      title: '',
+      author: '',
+      url: ''      
+    })    
+  }
    
   return (
     <div>
@@ -160,7 +231,10 @@ const App = () => {
             <p>{user.username} logged in</p>
             <button className='btn' type='button' onClick={handleLogout}>Logout</button>
           </div>
-          <BlogForm />
+          <div className='container'>
+            {blogForm()}
+            <Blogs />
+          </div>
         </>
       )}
       
