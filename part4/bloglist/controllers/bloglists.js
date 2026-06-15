@@ -28,23 +28,48 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
 
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
-  const savedUser = await user.save()
+  await user.save()
 
-  response.status(201).json({
-    savedBlog
-  })  
+  response.status(201).json(savedBlog)
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id/like', middleware.userExtractor, async (request, response) => {
   const id = request.params.id
 
   const { likes } = request.body
 
   const blog = await BlogList.findById(id)
+
   if(!blog) {
-      return response.status(404).end()
+    return response.status(404).end()
+  }  
+
+  blog.likes = likes
+
+  const updatedBlog = await blog.save()
+  response.status(200).json(updatedBlog)
+})
+
+blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
+  const id = request.params.id
+
+  const { title, author, url, likes } = request.body
+
+  const user = request.user  
+
+  const blog = await BlogList.findById(id)
+  
+  if(!blog) {
+    return response.status(404).end()
+  }
+  
+  if(blog.userID.toString() !== user._id.toString()) {
+    return response.status(403).json({ error: 'not allowed to update this blog' })
   }
 
+  blog.title = title
+  blog.author = author
+  blog.url = url
   blog.likes = likes
 
   const updatedBlog = await blog.save()
@@ -62,14 +87,16 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
     return response.status(404).end()
   }
 
-  if(blog.userID.toString() === user._id.toString()) {
-    await BlogList.findByIdAndDelete(id)    
-    user.blogs = user.blogs.filter(blogs => blogs.toString() !== id)    
-    await user.save()
-    response.status(204).end()
-  } else {
+  if(blog.userID.toString() !== user._id.toString()) {
     return response.status(403).json({ error: 'not allowed to delete this blog' })
-  }  
+  }
+
+  await BlogList.findByIdAndDelete(id)
+
+  user.blogs = user.blogs.filter(blogs => blogs.toString() !== id)  
+  await user.save()
+
+  response.status(204).end()  
 })
 
 module.exports = blogsRouter
