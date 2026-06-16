@@ -55,6 +55,10 @@ li {
   margin-top: 1rem;
 }
 
+.notification {
+  margin-top: 2rem;
+}
+
 .container {
   display: flex;
   gap: 1rem;

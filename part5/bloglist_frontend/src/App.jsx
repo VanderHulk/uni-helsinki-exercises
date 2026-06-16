@@ -1,15 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
+  const timerRef = useRef(null)
+
   const [blog, setBlog] = useState({
     title: '',
     author: '',
     url: ''    
   })
-  const [blogs, setBlogs] = useState([])  
+  const [blogs, setBlogs] = useState([])
+  const [message, setMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -32,19 +35,31 @@ const App = () => {
     }
   }, [])
 
-  const addBlog = async () => {    
-    const returnedBlog = await blogService.create(blog)
-    setBlogs(prevBlogs => prevBlogs.concat(returnedBlog))
-    setBlog({
-      title: '',
-      author: '',
-      url: ''      
-    })    
+  const addBlog = async () => {
+    try {
+      const returnedBlog = await blogService.create(blog)
+      setBlogs(prevBlogs => prevBlogs.concat(returnedBlog))
+      setBlog({
+        title: '',
+        author: '',
+        url: ''
+      })
+
+      handleNotify(
+        'Success',
+        `"${returnedBlog.title}" has been added.`
+      )
+      
+    } catch (error) {
+      notifyError(error)   
+    }
   }
 
   const addLikes = async (id) => {
-    const foundBlog = blogs.find(b => b.id === id)
-    const updatedBlog = { 
+    const foundBlog = findBlogById(id)
+    if(!foundBlog) return
+
+    const updatedBlog = {
         ...foundBlog, 
         likes: foundBlog.likes + 1
     }
@@ -55,25 +70,57 @@ const App = () => {
     ))
   }
 
-  const updateABlog = async (event, id) => {
-    event.preventDefault()
-    console.log('updateABlog id', id)
+  const updateABlog = async (id) => {    
+    try {  
+      const foundBlog = findBlogById(id)
+      if(!foundBlog) return
 
-    
-    const foundBlog = blogs.find(b => b.id === id)
-    const updatedBlog = {
-      ...foundBlog,
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
+      const updatedBlog = {
+        ...foundBlog,
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+      }
+
+      const returnedBlog = await blogService.update(id, updatedBlog)
+      setBlogs(prev => prev.map(b => 
+        b.id !== id ? b : returnedBlog
+      ))
+
+      handleNotify(
+        'Success',
+        `"${foundBlog.title}" has been updated.`
+      )
+
+      handleClear()
+    } catch (error) {        
+        notifyError(error)   
     }
+  }
 
-    const returnedBlog = await blogService.update(id, updatedBlog)
-    setBlogs(prev => prev.map(b => 
-      b.id !== id ? b : returnedBlog
-    ))
+  const deleteABlog = async(id) => {
+    scrollToTop()
 
-    handleClear()
+    const foundBlog = findBlogById(id)
+    if(!foundBlog) return
+
+    const yes = window.confirm(`Delete blog "${foundBlog.title}" by ${foundBlog.author}?`)
+    
+    try {
+      if(yes) {
+        const response = await blogService.remove(id)
+        console.log('deleteABlog', response)
+
+        setBlogs(prev => prev.filter(b => b.id !== id))
+
+        handleNotify (
+          'Success',
+          `"${foundBlog.title}" has been removed.`      
+        )
+      }      
+    } catch (error) {
+        notifyError(error)     
+    }
   }
   
 // components
@@ -90,7 +137,7 @@ const App = () => {
             <div className='emojis'>
               <button type='button' onClick={() => addLikes(id)}>👍</button>
               <button type='button' onClick={() => handleUpdate(id)}>✏️</button>
-              <button type='button'>🗑️</button>
+              <button type='button' onClick={() => deleteABlog(id)}>🗑️</button>
             </div>
           </li>
         ))}      
@@ -99,7 +146,7 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <div className='frm-login'>      
+    <div className='frm-login'>
       <form onSubmit={handleLogin}>
         <h3>Login</h3>
         <label>
@@ -126,7 +173,7 @@ const App = () => {
   const blogForm = () => (    
     <>
       <form onSubmit={handleSubmit}>
-        <h3>Create a blog</h3>
+        <h3>{!blog.id ? 'Create' : 'Edit'} a blog</h3>
         <label>
           <span className='lbl'>Title:</span>
           <input 
@@ -164,6 +211,12 @@ const App = () => {
     </>
   )
 
+  const notification = () => (    
+    <div className='notification'>
+      {message && <h3>{`${message.type}: ${message.text}`}</h3>}
+    </div>
+  )
+
 // handlers
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -183,8 +236,8 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch {
-      console.log('Wrong Credentials')
+    } catch (error) {
+      notifyError(error)
     }
   }
 
@@ -195,19 +248,24 @@ const App = () => {
   }
 
   const handleSubmit = (event) => {
-    event.preventDefault()    
+    event.preventDefault()   
+
     console.log('blogID: ', blog.id)
 
     if(!blog.id) {
-      addBlog(event)
+      addBlog()      
     } else {      
-      updateABlog(event, blog.id)
-    }
+      updateABlog(blog.id)
+    }   
   }
 
   const handleUpdate = (id) => {
-    // fill the blogform    
-    const foundBlog = blogs.find(b => b.id === id)
+    // fill the blogform
+    scrollToTop()
+
+    const foundBlog = findBlogById(id)
+    if(!foundBlog) return
+
     setBlog({
       ...foundBlog
     })    
@@ -219,18 +277,50 @@ const App = () => {
       author: '',
       url: ''      
     })    
+  } 
+
+  const handleNotify = (type, text, duration = 3000) => {
+    if(timerRef.current) {
+      clearTimeout(timerRef.current)
+    }
+
+    setMessage({ type, text })
+    
+    timerRef.current = setTimeout(() => {
+      setMessage(null)
+    }, duration)
+  }
+
+// helpers
+
+  const notifyError = (error) => {
+    handleNotify(
+      `Error ${error.response?.status || ''}`,
+      error.response?.data?.error || 'Something went wrong',
+      5000
+    )
+  }
+
+  const findBlogById = (id) => blogs.find(b => b.id === id)
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
   }
    
   return (
     <div>
-      <h1>BlogList App</h1>      
+      <h1>BlogList App</h1>
+      {notification()}
       {!user && loginForm()}
       {user && (
         <>
           <div className='logout'>
             <p>{user.username} logged in</p>
-            <button className='btn' type='button' onClick={handleLogout}>Logout</button>
-          </div>
+            <button className='btn' type='button' onClick={handleLogout}>Logout</button>            
+          </div>          
           <div className='container'>
             {blogForm()}
             <Blogs />
