@@ -2,6 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import BlogForm from './components/BlogForm'
+import Blogs from './components/Blogs'
+import LoginForm from './components/LoginForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const timerRef = useRef(null)
@@ -56,18 +60,23 @@ const App = () => {
   }
 
   const addLikes = async (id) => {
-    const foundBlog = findBlogById(id)
-    if(!foundBlog) return
+    try {
+      const foundBlog = findBlogById(id)
+      if(!foundBlog) return
 
-    const updatedBlog = {
-        ...foundBlog, 
-        likes: foundBlog.likes + 1
-    }
+      const updatedBlog = {
+          ...foundBlog, 
+          likes: foundBlog.likes + 1
+      }
     
-    const returnedBlog = await blogService.updateLikes(id, updatedBlog)
-    setBlogs(prev => prev.map(b => 
-      b.id !== id ? b : returnedBlog
-    ))
+      const returnedBlog = await blogService.updateLikes(id, updatedBlog)
+      setBlogs(prev => prev.map(b => 
+        b.id !== id ? b : returnedBlog
+      ))
+    } catch (error) {
+        scrollToTop()
+        notifyError(error)        
+    }
   }
 
   const updateABlog = async (id) => {    
@@ -118,106 +127,11 @@ const App = () => {
           `"${foundBlog.title}" has been removed.`      
         )
       }      
-    } catch (error) {
+    } catch (error) {        
         notifyError(error)     
     }
   }
   
-// components
-  const Blogs = () => {
-    return (
-      <ul>
-        <h3>List</h3>
-        {blogs.map(({ id, title, author, url, likes }) => (                
-          <li key={id}>
-            <p>{`Title: ${title}`}</p>
-            <p>{`Author: ${author}`}</p> 
-            <p>{`URL: ${url}`}</p>
-            <p>{`Likes: ${likes}`}</p>
-            <div className='emojis'>
-              <button type='button' onClick={() => addLikes(id)}>👍</button>
-              <button type='button' onClick={() => handleUpdate(id)}>✏️</button>
-              <button type='button' onClick={() => deleteABlog(id)}>🗑️</button>
-            </div>
-          </li>
-        ))}      
-      </ul>    
-    )
-  }
-
-  const loginForm = () => (
-    <div className='frm-login'>
-      <form onSubmit={handleLogin}>
-        <h3>Login</h3>
-        <label>
-          <span className='lbl login'>Username:</span>
-            <input 
-              type='text'
-              value={username}
-              onChange={({ target }) => setUsername(target.value)}
-            />    
-        </label>
-        <label>
-          <span className='lbl login'>Password:</span>
-            <input 
-              type='password'
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
-            />    
-        </label>
-        <button className='btn login' type='submit'>Login</button>
-      </form>
-    </div>  
-  )
-  
-  const blogForm = () => (    
-    <>
-      <form onSubmit={handleSubmit}>
-        <h3>{!blog.id ? 'Create' : 'Edit'} a blog</h3>
-        <label>
-          <span className='lbl'>Title:</span>
-          <input 
-            type='text' 
-            value={blog.title}
-            onChange={({ target }) => 
-              setBlog({...blog, title: target.value})
-            }
-          />    
-        </label>
-        <label>
-          <span className='lbl'>Author:</span>
-          <input 
-            type='text' 
-            value={blog.author}
-            onChange={({ target }) => 
-              setBlog({...blog, author: target.value})
-            }
-          />     
-        </label>
-        <label>
-          <span className='lbl'>URL:</span>
-          <input type='text' 
-            value={blog.url}
-            onChange={({ target }) => 
-              setBlog({...blog, url: target.value})
-            }
-          />  
-        </label>        
-        <div className='btns'>
-          <button className='btn' type="submit">{!blog.id ? 'Save' : 'Update'}</button>
-          <button className='btn' type="button" onClick={handleClear}>Clear</button>
-        </div>
-      </form>       
-    </>
-  )
-
-  const notification = () => (    
-    <div className='notification'>
-      {message && <h3>{`${message.type}: ${message.text}`}</h3>}
-    </div>
-  )
-
-// handlers
   const handleLogin = async (event) => {
     event.preventDefault()
     
@@ -313,8 +227,8 @@ const App = () => {
   return (
     <div>
       <h1>BlogList App</h1>
-      {notification()}
-      {!user && loginForm()}
+      {Notification(message)}
+      {!user && LoginForm(handleLogin, username, password, setUsername, setPassword)}
       {user && (
         <>
           <div className='logout'>
@@ -322,8 +236,15 @@ const App = () => {
             <button className='btn' type='button' onClick={handleLogout}>Logout</button>            
           </div>          
           <div className='container'>
-            {blogForm()}
-            <Blogs />
+            {BlogForm(handleSubmit, handleClear, blog, setBlog)}
+            <Blogs 
+              blogList={blogs}
+              eventHandlers={{
+                addLikes, 
+                handleUpdate, 
+                deleteABlog
+              }}
+            />
           </div>
         </>
       )}
