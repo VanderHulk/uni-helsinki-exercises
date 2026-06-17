@@ -41,7 +41,9 @@ blogsRouter.put('/:id/like', middleware.userExtractor, async (request, response)
   const blog = await BlogList.findById(id)
 
   if(!blog) {
-    return response.status(404).end()
+    return response.status(404).json({
+      error: 'Blog not found!'
+    })
   }  
 
   blog.likes = likes
@@ -60,11 +62,13 @@ blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
   const blog = await BlogList.findById(id)
   
   if(!blog) {
-    return response.status(404).end()
+    return response.status(404).json({
+      error: 'Blog not found!'
+    })
   }
   
   if(blog.userID.toString() !== user._id.toString()) {
-    return response.status(403).json({ error: 'not allowed to update this blog' })
+    return response.status(403).json({ error: 'Unauthorized to update this blog' })
   }
 
   blog.title = title
@@ -84,11 +88,13 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
   const blog = await BlogList.findById(id)
 
   if(!blog) {
-    return response.status(404).end()
+    return response.status(404).json({
+      error: 'Blog not found!'
+    })
   }
 
   if(blog.userID.toString() !== user._id.toString()) {
-    return response.status(403).json({ error: 'not allowed to delete this blog' })
+    return response.status(403).json({ error: 'Unauthorized to delete this blog' })
   }
 
   await BlogList.findByIdAndDelete(id)

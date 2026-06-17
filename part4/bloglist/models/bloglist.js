@@ -4,15 +4,15 @@ const bloglistSchema = new mongoose.Schema(
   {
     url: {
       type: String,
-      required: true
+      required: [true, 'URL is required']
     },
     title: {
       type: String,
-      required: true
+      required: [true, 'Title is required']
     },
     author: {
       type: String,
-      required: true
+      required: [true, 'Author is required']
     },
     userID: {
       type: mongoose.Schema.Types.ObjectId,
