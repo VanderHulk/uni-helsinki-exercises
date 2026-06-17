@@ -97,6 +97,56 @@ I chose not to clone the starter repository because I wanted to implement the ap
 
 25. Like updates are synchronized between the frontend and backend.
 
+### Authentication flow (summary)
+
+26. When a user logs in successfully:
+    - Backend returns a user object (including token)
+    - Token is stored in localStorage
+    - Token is set in Axios headers via service module
+    - This allows authenticated requests (POST, PUT, DELETE)
+
+27. On page refresh:
+    - Application checks localStorage
+    - If user data exists, user is restored to React state
+    - Token is re-attached automatically to API requests
+
+28. When logging out:
+    - User state is cleared
+    - Token is removed from service configuration
+    - localStorage is cleared
+
+### Error handling & notifications
+
+29. Implemented a notification system for user feedback:
+    - Success messages shown after create/update/delete actions
+    - Error messages displayed when API requests fail
+    - Notifications disappear automatically after a timeout
+
+30. Centralized error handling improves consistency:
+    - Backend errors are captured from Axios responses
+    - Fallback message used when backend response is missing or unclear
+
+### Code structure improvements (refactoring)
+
+31. Refactored repeated logic into helper functions:
+    - findBlogById() → simplifies lookup logic
+    - notifyError() → standardizes error messages
+    - scrollToTop() → improves UX after actions
+
+32. Event handlers manage application logic:
+    - Separate from UI rendering
+    - Handle API calls and state updates
+    - Keep components focused on presentation
+
+33. Components were split into separate modules:
+    - Improves readability
+    - Makes code easier to maintain and extend
+
+### Backend consistency note
+
+34. Learned that backend response formats affect frontend behavior:
+    - Consistent { error: "message" } responses simplify frontend logic
+    - Empty responses (e.g. .end()) require fallback handling in frontend
 --- 
 
 ## Key learning idea
