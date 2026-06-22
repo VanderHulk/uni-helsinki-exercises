@@ -1,4 +1,5 @@
-  const blogForm = (onSubmit, onClick, blog, setBlog) => (    
+  const BlogForm = ({ onSubmit, onClick, blog, setBlog }) => {    
+    return (    
     <>
       <form onSubmit={onSubmit}>
         <h3>{!blog.id ? 'Create' : 'Edit'} a blog</h3>
@@ -38,5 +39,6 @@
       </form>       
     </>
   )
+}
 
-export default blogForm
+export default BlogForm

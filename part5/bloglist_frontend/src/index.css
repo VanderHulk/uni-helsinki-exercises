@@ -27,6 +27,7 @@ label {
 }
 
 ul {
+  border: 1px solid red;
   list-style: none;
   padding-left: 1rem;  
 }
@@ -46,7 +47,6 @@ li {
 
 .btn.login {
   margin: 1rem auto 0;
-
 }
 
 .logout {  
@@ -59,7 +59,7 @@ li {
   margin-top: 2rem;
 }
 
-.container {
+.container-blogs {
   display: flex;
   gap: 1rem;
   margin-top: 1rem;
@@ -89,4 +89,20 @@ li {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
   width: 80px;
+}
+
+.btn,
+.btn-togglable {
+  padding: 0.15rem 1rem;
+}
+
+.btn-togglable.cancel {
+  width: fit-content;
+  margin-left: auto;
+}
+
+.container-togglable {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }

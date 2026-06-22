@@ -6,6 +6,7 @@ import BlogForm from './components/BlogForm'
 import Blogs from './components/Blogs'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const timerRef = useRef(null)
@@ -38,7 +39,7 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
-
+  
   const addBlog = async () => {
     try {
       const returnedBlog = await blogService.create(blog)
@@ -223,6 +224,8 @@ const App = () => {
       behavior: 'smooth'
     })
   }
+
+  console.log(blog)
    
   return (
     <div>
@@ -235,8 +238,15 @@ const App = () => {
             <p>{user.username} logged in</p>
             <button className='btn' type='button' onClick={handleLogout}>Logout</button>            
           </div>          
-          <div className='container'>
-            {BlogForm(handleSubmit, handleClear, blog, setBlog)}
+          <div className='container-blogs'>
+            <Togglable buttonLabel='Create New Blog'>
+              <BlogForm 
+                onSubmit={handleSubmit}
+                onClick={handleClear}
+                blog={blog}
+                setBlog={setBlog}
+              />
+            </Togglable>
             <Blogs 
               blogList={blogs}
               eventHandlers={{
@@ -247,8 +257,7 @@ const App = () => {
             />
           </div>
         </>
-      )}
-      
+      )}      
     </div>
   )
 }

@@ -147,6 +147,9 @@ I chose not to clone the starter repository because I wanted to implement the ap
 34. Learned that backend response formats affect frontend behavior:
     - Consistent { error: "message" } responses simplify frontend logic
     - Empty responses (e.g. .end()) require fallback handling in frontend
+
+35. 
+
 --- 
 
 ## Key learning idea
