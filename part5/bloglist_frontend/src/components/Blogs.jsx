@@ -12,7 +12,7 @@ const Blogs = ({blogList, eventHandlers}) => {
           <p>{`Likes: ${likes}`}</p>
           <div className='emojis'>
             <button type='button' onClick={() => addLikes(id)}>👍</button>
-            <button type='button' onClick={() => handleUdate(id)}>✏️</button>
+            <button type='button' onClick={() => handleUpdate(id)}>✏️</button>
             <button type='button' onClick={() => deleteBlog(id)}>🗑️</button>
           </div>
         </li>
