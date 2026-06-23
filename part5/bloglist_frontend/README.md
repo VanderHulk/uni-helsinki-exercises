@@ -148,7 +148,42 @@ I chose not to clone the starter repository because I wanted to implement the ap
     - Consistent { error: "message" } responses simplify frontend logic
     - Empty responses (e.g. .end()) require fallback handling in frontend
 
-35. 
+## Exercise 5.5-5.11
+
+### Togglable
+
+35. Implemented Togglable (from the Notes App) to control form visibility
+
+36. Refactor form (create blog)
+    Before:
+      - App owned shared state [blog, setBlog] for creating and editing, had to refactor it to meet the course requirements to separate creating new blog component and move all the states required
+    After:
+      - removed [blog, setBlog] state
+      - moved state into BlogForm
+      - BlogForm now owns {title, author, url}
+      - App only passes addBlog
+      - Editing temporarily disabled:
+        - updateABlog
+        - handleUpdate
+
+37. Separate Blog component
+    Before:
+      - Blogs handled:
+        - rendering list
+        - UI logic for each blog
+        - visibility logic (problematic when shared)
+    After: 
+      - Introduced Blog component:
+        - owns its own visible state
+        - handles:
+          - view / hide
+          - like
+          - delete
+          - (future: update)
+      - Blogs now only:
+        - maps list → Blog components
+    
+    *Each list item should own its own UI state.*
 
 --- 
 

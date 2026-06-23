@@ -26,8 +26,7 @@ label {
   margin-bottom: 0.5rem;
 }
 
-ul {
-  border: 1px solid red;
+ul {  
   list-style: none;
   padding-left: 1rem;  
 }
@@ -62,16 +61,35 @@ li {
 .container-blogs {
   display: flex;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 1rem;  
 }
 
-.emojis {
-  display: flex;  
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+.group-title {
+  border: 1px solid black;
+  border-radius: 3px;
+  padding: 0.5rem;
 }
 
-.emojis button {  
+.group-title,
+.group-author {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.group-title button,
+.group-author button {
+  padding: 0;
+}
+
+.group-details {
+  border: 1px solid black;
+  border-radius: 3px;
+  padding: 0.5rem 2rem;
+  margin-top: 0.25rem;
+}
+
+.group-details button:not(.group-details .group-author button) {  
   font-size: 1rem;  
   width: fit-content;
   aspect-ratio: 1;

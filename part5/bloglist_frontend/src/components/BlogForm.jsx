@@ -1,40 +1,62 @@
-  const BlogForm = ({ onSubmit, onClick, blog, setBlog }) => {    
-    return (    
+import { useState } from 'react'
+
+const BlogForm = ({ addBlog }) => {  
+  const [newBlog, setNewBlog] = useState({
+    title: '',
+    author: '',
+    url: ''
+  })
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    
+    addBlog({
+      title: newBlog.title,
+      author: newBlog.author,
+      url: newBlog.url
+    })
+
+    handleClear()
+  }
+
+  const handleClear = () => {
+    setNewBlog({
+      title: '',
+      author: '',
+      url: ''      
+    })    
+  } 
+
+  return (    
     <>
-      <form onSubmit={onSubmit}>
-        <h3>{!blog.id ? 'Create' : 'Edit'} a blog</h3>
+      <form onSubmit={handleSubmit}>
+        <h3>Create a blog</h3>
         <label>
           <span className='lbl'>Title:</span>
           <input 
             type='text' 
-            value={blog.title}
-            onChange={({ target }) => 
-              setBlog({...blog, title: target.value})
-            }
+            value={newBlog.title}
+            onChange={({target}) => setNewBlog({ ...newBlog, title: target.value })}
           />    
         </label>
         <label>
           <span className='lbl'>Author:</span>
           <input 
             type='text' 
-            value={blog.author}
-            onChange={({ target }) => 
-              setBlog({...blog, author: target.value})
-            }
+            value={newBlog.author}
+            onChange={({target}) => setNewBlog({ ...newBlog, author: target.value })}
           />     
         </label>
         <label>
           <span className='lbl'>URL:</span>
           <input type='text' 
-            value={blog.url}
-            onChange={({ target }) => 
-              setBlog({...blog, url: target.value})
-            }
+            value={newBlog.url}
+            onChange={({target}) => setNewBlog({ ...newBlog, url: target.value })}
           />  
         </label>        
         <div className='btns'>
-          <button className='btn' type="submit">{!blog.id ? 'Save' : 'Update'}</button>
-          <button className='btn' type="button" onClick={onClick}>Clear</button>
+          <button className='btn' type="submit">Save</button>
+          <button className='btn' type="button" onClick={handleClear}>Clear</button>
         </div>
       </form>       
     </>

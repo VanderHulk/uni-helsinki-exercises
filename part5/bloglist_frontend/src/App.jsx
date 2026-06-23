@@ -10,12 +10,8 @@ import Togglable from './components/Togglable'
 
 const App = () => {
   const timerRef = useRef(null)
+  const blogFormRef = useRef()
 
-  const [blog, setBlog] = useState({
-    title: '',
-    author: '',
-    url: ''    
-  })
   const [blogs, setBlogs] = useState([])
   const [message, setMessage] = useState(null)
   const [username, setUsername] = useState('')
@@ -40,16 +36,11 @@ const App = () => {
     }
   }, [])
   
-  const addBlog = async () => {
+  const addBlog = async (blogObject) => {
     try {
-      const returnedBlog = await blogService.create(blog)
+      const returnedBlog = await blogService.create(blogObject)
       setBlogs(prevBlogs => prevBlogs.concat(returnedBlog))
-      setBlog({
-        title: '',
-        author: '',
-        url: ''
-      })
-
+      
       handleNotify(
         'Success',
         `"${returnedBlog.title}" has been added.`
@@ -80,7 +71,7 @@ const App = () => {
     }
   }
 
-  const updateABlog = async (id) => {    
+  /* const updateABlog = async (id) => {    
     try {  
       const foundBlog = findBlogById(id)
       if(!foundBlog) return
@@ -106,7 +97,7 @@ const App = () => {
     } catch (error) {        
         notifyError(error)   
     }
-  }
+  } */
 
   const deleteABlog = async(id) => {
     scrollToTop()
@@ -160,21 +151,9 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     blogService.setToken(null)
     setUser(null)
-  }
+  }  
 
-  const handleSubmit = (event) => {
-    event.preventDefault()   
-
-    console.log('blogID: ', blog.id)
-
-    if(!blog.id) {
-      addBlog()      
-    } else {      
-      updateABlog(blog.id)
-    }   
-  }
-
-  const handleUpdate = (id) => {
+  /* const handleUpdate = (id) => {
     // fill the blogform
     scrollToTop()
 
@@ -184,15 +163,7 @@ const App = () => {
     setBlog({
       ...foundBlog
     })    
-  }
-
-  const handleClear = () => {
-    setBlog({
-      title: '',
-      author: '',
-      url: ''      
-    })    
-  } 
+  } */  
 
   const handleNotify = (type, text, duration = 3000) => {
     if(timerRef.current) {
@@ -224,8 +195,6 @@ const App = () => {
       behavior: 'smooth'
     })
   }
-
-  console.log(blog)
    
   return (
     <div>
@@ -239,20 +208,15 @@ const App = () => {
             <button className='btn' type='button' onClick={handleLogout}>Logout</button>            
           </div>          
           <div className='container-blogs'>
-            <Togglable buttonLabel='Create New Blog'>
-              <BlogForm 
-                onSubmit={handleSubmit}
-                onClick={handleClear}
-                blog={blog}
-                setBlog={setBlog}
-              />
+            <Togglable buttonLabel='Create New Blog' ref={blogFormRef}>
+              <BlogForm addBlog={addBlog} />
             </Togglable>
             <Blogs 
               blogList={blogs}
               eventHandlers={{
-                addLikes, 
-                handleUpdate, 
-                deleteABlog
+                addLikes,                
+                /* handleUpdate, */
+                deleteABlog           
               }}
             />
           </div>
