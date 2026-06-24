@@ -64,21 +64,25 @@ li {
   margin-top: 1rem;  
 }
 
+.container-togglable {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .group-title {
   border: 1px solid black;
   border-radius: 3px;
   padding: 0.5rem;
 }
 
-.group-title,
-.group-author {
+.group-title {
   display: flex;
   align-items: center;
   gap: 2px;
 }
 
-.group-title button,
-.group-author button {
+.group-title button {
   padding: 0;
 }
 
@@ -89,10 +93,11 @@ li {
   margin-top: 0.25rem;
 }
 
-.group-details button:not(.group-details .group-author button) {  
+.group-details button {  
   font-size: 1rem;  
   width: fit-content;
   aspect-ratio: 1;
+  margin-top: 0.25rem;
 }
 
 .lbl { 
@@ -119,8 +124,8 @@ li {
   margin-left: auto;
 }
 
-.container-togglable {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.p-creator {
+  font-size: 0.85rem;
+  font-style: italic;
+  margin-top: 1rem;
 }

@@ -1,65 +1,49 @@
-import { useState } from 'react'
+const BlogForm = ({
+  blog,
+  formTitle,
+  onSubmit,
+  onChange,
+  onClear,
+  btnName
+}) => {
 
-const BlogForm = ({ addBlog }) => {  
-  const [newBlog, setNewBlog] = useState({
-    title: '',
-    author: '',
-    url: ''
-  })
+  return (
+    <form onSubmit={onSubmit}>
 
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    
-    addBlog({
-      title: newBlog.title,
-      author: newBlog.author,
-      url: newBlog.url
-    })
+      <h3>{formTitle}</h3>
 
-    handleClear()
-  }
+      <label>
+        <span className='lbl'>Title:</span>
+        <input
+          type='text'
+          value={blog.title}
+          onChange={({ target }) => onChange('title', target.value)}
+        />
+      </label>
 
-  const handleClear = () => {
-    setNewBlog({
-      title: '',
-      author: '',
-      url: ''      
-    })    
-  } 
+      <label>
+        <span className='lbl'>Author:</span>
+        <input
+          type='text'
+          value={blog.author}
+          onChange={({ target }) => onChange('author', target.value)}
+        />
+      </label>
 
-  return (    
-    <>
-      <form onSubmit={handleSubmit}>
-        <h3>Create a blog</h3>
-        <label>
-          <span className='lbl'>Title:</span>
-          <input 
-            type='text' 
-            value={newBlog.title}
-            onChange={({target}) => setNewBlog({ ...newBlog, title: target.value })}
-          />    
-        </label>
-        <label>
-          <span className='lbl'>Author:</span>
-          <input 
-            type='text' 
-            value={newBlog.author}
-            onChange={({target}) => setNewBlog({ ...newBlog, author: target.value })}
-          />     
-        </label>
-        <label>
-          <span className='lbl'>URL:</span>
-          <input type='text' 
-            value={newBlog.url}
-            onChange={({target}) => setNewBlog({ ...newBlog, url: target.value })}
-          />  
-        </label>        
-        <div className='btns'>
-          <button className='btn' type="submit">Save</button>
-          <button className='btn' type="button" onClick={handleClear}>Clear</button>
-        </div>
-      </form>       
-    </>
+      <label>
+        <span className='lbl'>URL:</span>
+        <input type='text'
+          value={blog.url}
+          onChange={({ target }) => onChange('url', target.value)}
+        />
+      </label>
+
+      <div className='btns'>
+        <button className='btn' type="submit">Save</button>
+        <button className='btn' type="button" onClick={onClear}>{btnName}</button>
+      </div>
+
+    </form>
   )
 }
 

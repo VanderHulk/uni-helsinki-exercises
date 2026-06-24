@@ -1,7 +1,7 @@
-  const notification = (message) => (    
-    <div className='notification'>
-      {message && <h3>{`${message.type}: ${message.text}`}</h3>}
-    </div>
-  )
+const notification = (message) => (
+  <div className='notification'>
+    {message && <h3>{`${message.type}: ${message.text}`}</h3>}
+  </div>
+)
 
-  export default notification
+export default notification
