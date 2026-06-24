@@ -148,7 +148,7 @@ I chose not to clone the starter repository because I wanted to implement the ap
     - Consistent { error: "message" } responses simplify frontend logic
     - Empty responses (e.g. .end()) require fallback handling in frontend
 
-## Exercise 5.5-5.11
+## Exercise 5.5-5.12
 
 ### Togglable
 
@@ -184,6 +184,68 @@ I chose not to clone the starter repository because I wanted to implement the ap
         - maps list → Blog components
     
     *Each list item should own its own UI state.*
+
+### ESLint configuration and fixes
+
+38. Added and configured ESLint in the Vite project.
+
+39. Resolved all linting errors across the application:
+    - Fixed React-related lint issues
+    - Ensured consistent code style
+    - Used npm run lint to verify clean output
+
+40. Learned that modern ESLint setups (Vite + flat config) may require adjusting plugin configuration due to version conflicts.
+
+### Blog editing functionality
+
+41. Implemented full blog editing feature:
+    - Clicking edit selects a blog for editing
+    - Selected blog is stored in editedBlog state
+    - Conditional rendering switches between:
+      - Create blog form
+      - Edit blog form
+
+42. Created controlled update flow:
+    - handleUpdate(id) selects blog and sets editedBlog
+    - handleUpdateOnChange(field, value) updates state dynamically using computed property names
+    - updateABlog submits updated blog to backend
+
+43. Blog update request:
+    - Sends updated blog to backend via PUT request
+    - Updates React state using .map() to replace modified blog
+    - Clears edit state after successful update
+
+### BlogForm reuse for editing
+
+44. Reused BlogForm component for both create and edit modes.
+
+45. Implemented conditional behavior:
+    - If editedBlog is null → create mode
+    - If editedBlog exists → edit mode
+
+46. Passed different props depending on mode:
+    - Create: addBlog
+    - Edit: blog, onSubmit, onChange, onClear
+
+### UI state management improvement
+
+47. Introduced editedBlog state in App:
+    - Separates create and edit workflows
+    - Avoids shared mutable form state
+
+48. Added helper:
+    - handleUpdateClear() → resets edit mode
+
+49. Final backend/frontend consistency improvements
+    - Backend populate applied in update route
+    - Prevented userID from losing populated data after update
+
+Summary of today's work `24.06.2026`    
+- Blog editing feature
+- Reusable BlogForm for create + edit
+- ESLint setup and cleanup
+- Improved state separation for editing flow
+- Backend consistency for populated user data
 
 --- 
 
