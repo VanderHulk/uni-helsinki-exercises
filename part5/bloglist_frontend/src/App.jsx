@@ -51,7 +51,7 @@ const App = () => {
     } catch (error) {
       notifyError(error)
     }
-  }
+  }  
 
   const addLikes = async (id) => {
     try {

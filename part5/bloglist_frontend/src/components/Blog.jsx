@@ -6,17 +6,18 @@ const Blog = ({ blog, user, like, update, remove }) => {
 
   return (
     <li>
-      <div className='group-title'>
-        <p>{`Title: ${blog.title}`}</p>
+      <div className='group-main'>
+        <p className='title'>{`${blog.title}`}</p>
+        <p> -- </p>
+        <p className='author'>{`${blog.author}`}</p>
         <button className='btn' type='button' onClick={() => setVisible(!visible)}>{visible ? 'Hide' : 'View'}</button>
       </div>
 
       {visible && (
         <div className='group-details'>
-
-          <p>{`Author: ${blog.author}`}</p>
-          <p>{`URL: ${blog.url}`}</p>
-          <p>{`Likes: ${blog.likes}`}</p>
+          
+          <p>{`${blog.url}`}</p>
+          <p>{`likes ${blog.likes}`}</p>
 
           <button type='button' onClick={() => like(blog.id)}>👍</button>
 

@@ -70,20 +70,24 @@ li {
   gap: 2px;
 }
 
-.group-title {
+.group-main {
   border: 1px solid black;
   border-radius: 3px;
   padding: 0.5rem;
 }
 
-.group-title {
+.group-main {
   display: flex;
   align-items: center;
   gap: 2px;
 }
 
-.group-title button {
+.group-main button {
   padding: 0;
+}
+
+.group-main > .author { 
+  font-style: italic;
 }
 
 .group-details {

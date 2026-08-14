@@ -240,12 +240,64 @@ I chose not to clone the starter repository because I wanted to implement the ap
     - Backend populate applied in update route
     - Prevented userID from losing populated data after update
 
-Summary of today's work `24.06.2026`    
-- Blog editing feature
-- Reusable BlogForm for create + edit
-- ESLint setup and cleanup
-- Improved state separation for editing flow
-- Backend consistency for populated user data
+## Exercise 5.13-5.16
+
+### 5.13
+
+50. `npm install --save-dev vitest jsdom`
+
+51. `npm install --save-dev @testing-library/react @testing-library/jest-dom`
+
+52. Add a script to package.json `"test": "vitest run"`
+
+53. `npm install --save-dev @testing-library/user-event`
+
+54. Create `Blog.test.jsx` in components
+
+55. Then I remember! Add an afterEach test lifecycle hook to run cleanup() after every test - `testSetup.js`
+
+56. And then we forgot to define test inside `vite.config.js` Heh! So we did!
+
+57. Refactor Blog.jsx to meet exercise requirement - Move author inside div 'group-main' block
+
+58. 'renders title and author' test success!
+
+59. - `getByText()` for things that must exist
+    - `queryByText()` for things that must not exist and returns null if zero matches
+    - `toBeNull()` asserts result to be null
+
+### 5.14
+
+60. Add test to check if url and likes are visible after clicking View button
+
+61. 'renders url and likes after clicking view' test success!
+
+### 5.15
+
+62. Add test to check if like button has been clicked twice
+
+63. Use a mock function (vi.fn()) as the like prop and verify it was called twice when the like button was clicked twice
+
+64. 'like button clicked twice' test success!
+
+### 5.16
+
+65. Create BlogForm.test.jsx to test if the form calls the event handler it received as props and with the right details when a new blog is created
+
+66. This Blog App I have created is a little bit different than the Full Stack Open exercise. I have a reusable BlogForm component for both creating and updating a blog.
+
+67. I realize that BlogForm.test.jsx will not meet the exercise brief as it is not mainly for just creating a blog.
+
+68. I have decided to move the test on CreateBlog.jsx, where the new blog state and submit logic are handled
+
+69. Create an addBlogMock as the addBlog prop, since addBlog receives a function. Simulate the user's actions of filling in the form and clicking Save, then verify that the mock was called with the correct blog details.
+
+70. Tested assertions with both correct and incorrect data, resulting in passed and failed test results.
+
+
+
+
+
 
 --- 
 
