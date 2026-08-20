@@ -294,11 +294,6 @@ I chose not to clone the starter repository because I wanted to implement the ap
 
 70. Tested assertions with both correct and incorrect data, resulting in passed and failed test results.
 
-
-
-
-
-
 --- 
 
 ## Key learning idea
@@ -314,3 +309,8 @@ I chose not to clone the starter repository because I wanted to implement the ap
 - Protecting backend routes with user ownership checks
 - Updating React state after asynchronous API requests
 - Separating API communication into service modules
+- Different kinds of tests:
+  - Unit tests → "Is this piece working?"
+  - Integration tests → "Are these pieces working together?"
+  - Snapshot tests → "Did this component's output unexpectedly change?"
+  - E2E tests → "Can a real user actually use the application successfully?"
